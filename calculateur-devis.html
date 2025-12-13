@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Paies Conseils - Calculateur de Devis</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', -apple-system, sans-serif; background: linear-gradient(180deg, #f8f6f3 0%, #efe9e1 100%); min-height: 100vh; color: #2c3e50; }
+    
+    /* Header */
+    .header { background: #fff; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 12px rgba(12,27,42,0.08); border-bottom: 3px solid #c7a86e; }
+    .date-label { background: #f8f6f3; padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #0c1b2a; border: 1px solid #e8e4df; }
+    
+    /* Title Bar */
+    .title-bar { background: #0c1b2a; padding: 20px 40px; text-align: center; }
+    .main-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 3px; }
+    
+    /* Navigation */
+    .nav { display: flex; gap: 8px; padding: 20px 40px; background: #fff; border-bottom: 1px solid #e8e4df; }
+    .nav-btn { display: flex; align-items: center; gap: 8px; padding: 12px 24px; border: 2px solid transparent; border-radius: 10px; background: #f8f6f3; cursor: pointer; font-size: 15px; font-weight: 500; color: #5a6c7d; transition: all 0.2s; font-family: inherit; }
+    .nav-btn:hover { background: #e8e4df; }
+    .nav-btn.active { background: #0c1b2a; color: #fff; border-color: #0c1b2a; }
+    
+    /* Main */
+    .main { padding: 32px 40px; max-width: 1200px; margin: 0 auto; }
+    .section { background: #fff; border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid #e8e4df; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: #0c1b2a; margin: 0 0 24px 0; display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 2px solid #f0ebe5; }
+    
+    /* Form */
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group-full { display: flex; flex-direction: column; grid-column: 1 / -1; }
+    .label { font-size: 13px; font-weight: 600; color: #5a6c7d; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input, .select { padding: 14px 16px; border: 2px solid #e8e4df; border-radius: 10px; font-size: 15px; font-family: inherit; background: #fafaf9; transition: all 0.2s; }
+    .input:focus, .select:focus { outline: none; border-color: #0c1b2a; box-shadow: 0 0 0 3px rgba(12,27,42,0.1); }
+    
+    /* Table */
+    .table-container { border: 1px solid #e8e4df; border-radius: 12px; overflow: hidden; }
+    .table-header { display: flex; align-items: center; padding: 14px 16px; background: #f8f6f3; border-bottom: 2px solid #e8e4df; font-weight: 600; font-size: 12px; text-transform: uppercase; color: #5a6c7d; letter-spacing: 0.5px; }
+    .table-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f0ebe5; background: #fff; }
+    .table-row:hover { background: #fafaf9; }
+    .select-small, .input-small { width: 100%; padding: 10px 12px; border: 1px solid #e8e4df; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; }
+    .tarif-display { color: #0c1b2a; font-weight: 600; font-size: 14px; }
+    .total-ligne { color: #c7a86e; font-weight: 700; font-size: 15px; }
+    .remove-btn { width: 32px; height: 32px; border: none; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 20px; cursor: pointer; }
+    .add-btn { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding: 12px 24px; border: 2px dashed #c7a86e; border-radius: 10px; background: transparent; color: #c7a86e; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    
+    /* Total Section */
+    .total-section { background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%); border-radius: 16px; padding: 28px; margin-bottom: 24px; color: #fff; }
+    .total-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .total-label { font-size: 14px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+    .total-amount { font-size: 24px; font-weight: 600; }
+    .tva-note { font-size: 12px; opacity: 0.7; text-align: center; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); margin: 16px 0; }
+    .net-label { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; }
+    .net-amount { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #c7a86e; }
+    
+    /* Buttons */
+    .actions { display: flex; justify-content: center; gap: 16px; }
+    .preview-btn { display: flex; align-items: center; gap: 8px; padding: 14px 32px; border: none; border-radius: 10px; background: #0c1b2a; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; box-shadow: 0 4px 12px rgba(12,27,42,0.3); }
+    .print-btn { display: flex; align-items: center; gap: 8px; padding: 14px 32px; border: none; border-radius: 10px; background: #c7a86e; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .close-btn { display: flex; align-items: center; gap: 8px; padding: 14px 24px; border: 2px solid #e8e4df; border-radius: 10px; background: #fff; color: #5a6c7d; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    
+    /* Forfait */
+    .forfait-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .forfait-card { background: #f8f6f3; padding: 20px; border-radius: 12px; border: 1px solid #e8e4df; }
+    .forfait-label { display: block; font-size: 13px; font-weight: 600; color: #5a6c7d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .forfait-input { width: 100%; padding: 14px 16px; border: 2px solid #e8e4df; border-radius: 10px; font-size: 18px; font-weight: 600; font-family: inherit; background: #fff; }
+    .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; color: #2c3e50; cursor: pointer; }
+    .checkbox-label input { width: 20px; height: 20px; accent-color: #0c1b2a; }
+    
+    /* Result Section */
+    .result-section { background: #fff; border-radius: 16px; padding: 28px; border: 1px solid #e8e4df; }
+    .result-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: #0c1b2a; margin: 0 0 20px 0; }
+    .result-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0ebe5; font-size: 15px; }
+    .result-amount { font-weight: 600; color: #0c1b2a; }
+    .result-total { margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%); border-radius: 12px; }
+    .result-total-line { display: flex; justify-content: space-between; padding: 8px 0; color: #fff; }
+    .result-total-label { font-weight: 600; letter-spacing: 0.5px; }
+    .result-total-amount { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: #c7a86e; }
+    .disclaimer { margin-top: 20px; padding: 16px; background: #fef3c7; border-radius: 10px; font-size: 13px; color: #92400e; text-align: center; font-style: italic; }
+    
+    /* Grille */
+    .grille-categorie { margin-bottom: 24px; }
+    .grille-cat-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: #c7a86e; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #f0ebe5; }
+    .grille-table { background: #f8f6f3; border-radius: 10px; overflow: hidden; }
+    .grille-line { display: grid; grid-template-columns: 100px 1fr 80px 120px; padding: 12px 16px; border-bottom: 1px solid #e8e4df; align-items: center; font-size: 14px; }
+    .grille-ref { font-family: monospace; font-size: 12px; color: #5a6c7d; background: #e8e4df; padding: 4px 8px; border-radius: 4px; width: fit-content; }
+    .grille-libelle { color: #2c3e50; }
+    .grille-tarif { font-weight: 700; color: #0c1b2a; text-align: right; }
+    .grille-unite { color: #5a6c7d; font-size: 12px; text-align: right; }
+    
+    /* Footer */
+    .footer { background: #0c1b2a; padding: 24px 40px; margin-top: 40px; text-align: center; }
+    .footer-text { color: #fff; font-size: 15px; margin-bottom: 8px; }
+    .footer-small { color: rgba(255,255,255,0.6); font-size: 12px; }
+    
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(12,27,42,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; overflow: auto; }
+    .modal-container { background: #fff; border-radius: 16px; max-width: 800px; width: 100%; max-height: 90vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal-actions { display: flex; justify-content: space-between; align-items: center; padding: 20px 28px; border-bottom: 2px solid #f0ebe5; background: #f8f6f3; border-radius: 16px 16px 0 0; position: sticky; top: 0; z-index: 10; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: #0c1b2a; }
+    .modal-buttons { display: flex; gap: 12px; }
+    
+    /* Print Area */
+    .print-area { padding: 40px; background: #fff; font-family: 'DM Sans', sans-serif; }
+    .print-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #0c1b2a; }
+    .print-contact { color: #5a6c7d; font-size: 12px; margin: 10px 0 0 0; }
+    .print-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #c7a86e; }
+    .print-title { font-size: 22px; font-weight: 700; color: #0c1b2a; margin: 0; }
+    .print-date { color: #5a6c7d; font-size: 14px; margin: 0; }
+    .print-client { background: #f8f6f3; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e8e4df; }
+    .print-client-name { font-size: 16px; font-weight: 700; color: #0c1b2a; margin: 0 0 8px 0; }
+    .print-client p { margin: 4px 0; font-size: 14px; }
+    .print-client-info { display: flex; gap: 24px; margin-top: 8px; font-size: 13px; color: #5a6c7d; }
+    .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .print-table th { background: #0c1b2a; color: #fff; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+    .print-table td { padding: 12px; border-bottom: 1px solid #e8e4df; font-size: 14px; }
+    .print-table .center { text-align: center; }
+    .print-table .right { text-align: right; }
+    .print-totals { text-align: right; margin-top: 20px; padding-top: 20px; border-top: 2px solid #0c1b2a; }
+    .print-tva { font-size: 11px; color: #5a6c7d; font-style: italic; }
+    .print-net { font-size: 18px; color: #0c1b2a; margin-top: 10px; }
+    .print-accord { display: flex; gap: 30px; margin-top: 30px; padding: 20px; border: 2px solid #c7a86e; border-radius: 8px; background: #fdfcfa; }
+    .print-accord-left { flex: 1; }
+    .print-accord-right { flex: 1; display: flex; align-items: center; }
+    .print-accord-title { font-size: 14px; font-weight: 700; color: #0c1b2a; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .print-accord-text { font-size: 12px; color: #5a6c7d; margin: 0 0 8px 0; }
+    .print-signature-box { width: 100%; height: 80px; border: 1px dashed #c7a86e; border-radius: 4px; margin-top: 10px; background: #fff; }
+    .print-accord-note { font-size: 11px; color: #5a6c7d; font-style: italic; line-height: 1.5; margin: 0; }
+    .print-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e8e4df; text-align: center; font-size: 11px; color: #5a6c7d; }
+    
+    .hidden { display: none; }
+    
+    @media print {
+      body * { visibility: hidden; }
+      .print-area, .print-area * { visibility: visible; }
+      .print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      .modal-actions { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                                                                            ║
+// ║   🔧 GRILLE TARIFAIRE MODIFIABLE                                           ║
+// ║                                                                            ║
+// ║   Pour modifier un tarif : changez la valeur "tarif" de la prestation      ║
+// ║   Pour ajouter une prestation : copiez une ligne et modifiez-la            ║
+// ║   Pour supprimer : supprimez la ligne correspondante                       ║
+// ║                                                                            ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+const TARIFS = {
+  // ══════════════════════════════════════════════════════════════════════════
+  // AUDIT & DÉMARRAGE MISSION
+  // ══════════════════════════════════════════════════════════════════════════
+  'AUD-001': { libelle: 'Audit réglementaire de paie', tarif: 120, unite: '€/heure' },
+  'MIS-001': { libelle: 'Mise en place dossier paie', tarif: 120, unite: '€/heure' },
+  'REP-001': { libelle: 'Reprise de données paie', tarif: 120, unite: '€/heure' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // BULLETINS DE PAIE & DÉCLARATIONS
+  // ══════════════════════════════════════════════════════════════════════════
+  'BUL-001': { libelle: 'Bulletin de paie (1-20 sal.)', tarif: 20, unite: '€/bulletin' },
+  'BUL-004': { libelle: 'Bulletin de paie (+20 sal.)', tarif: 15, unite: '€/bulletin' },
+  'ENV-001': { libelle: 'Envoi coffre-fort électronique', tarif: 2, unite: '€/salarié' },
+  'ENV-002': { libelle: 'Envoi bulletins papier', tarif: 2, unite: '€/salarié' },
+  'CHS-001': { libelle: 'Régularisation charges sociales', tarif: 120, unite: '€/heure' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GESTION COURANTE PAIE
+  // ══════════════════════════════════════════════════════════════════════════
+  'ENT-001': { libelle: 'Entrée salarié logiciel paie', tarif: 15, unite: '€/salarié' },
+  'MED-001': { libelle: 'Affiliation médecine du travail', tarif: 45, unite: '€/société' },
+  'MED-002': { libelle: 'Gestion entrée/sortie médecine travail', tarif: 15, unite: '€/salarié' },
+  'MUT-001': { libelle: 'Affiliation mutuelle/prévoyance', tarif: 45, unite: '€/organisme' },
+  'MUT-002': { libelle: 'Affiliation salarié mutuelle', tarif: 15, unite: '€/salarié' },
+  'STC-001': { libelle: 'Documents fin de contrat (STC)', tarif: 50, unite: '€/salarié' },
+  'ATT-001': { libelle: 'Attestation maladie/AT/TPT', tarif: 20, unite: '€/attestation' },
+  'DAT-001': { libelle: 'Déclaration accident du travail', tarif: 30, unite: '€/déclaration' },
+  'PRV-001': { libelle: 'Gestion dossier prévoyance', tarif: 45, unite: '€/dossier' },
+  'SIM-001': { libelle: 'Simulation salaire', tarif: 50, unite: '€/simulation' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SPÉCIFICITÉS BTP / CI-BTP
+  // ══════════════════════════════════════════════════════════════════════════
+  'BTP-001': { libelle: 'Déclaration CP CI-BTP', tarif: 20, unite: '€/salarié' },
+  'BTP-002': { libelle: 'Déclaration chômage intempéries', tarif: 20, unite: '€/salarié' },
+  'BTP-003': { libelle: 'Radiation CI-BTP', tarif: 20, unite: '€/salarié' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CONTRATS DE TRAVAIL
+  // ══════════════════════════════════════════════════════════════════════════
+  'CDI-001': { libelle: 'CDI', tarif: 150, unite: '€/contrat' },
+  'CDD-001': { libelle: 'CDD', tarif: 100, unite: '€/contrat' },
+  'SAI-001': { libelle: 'Contrat saisonnier/chantier', tarif: 120, unite: '€/contrat' },
+  'EXT-001': { libelle: 'Contrat Extra (HCR)', tarif: 120, unite: '€/contrat' },
+  'AVE-001': { libelle: 'Avenant (contrat Nexus)', tarif: 70, unite: '€/avenant' },
+  'AVE-002': { libelle: 'Avenant (contrat externe)', tarif: 80, unite: '€/avenant' },
+  'LET-001': { libelle: "Attestation emploi / Lettre embauche", tarif: 30, unite: '€/document' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // DÉCISIONS & ACCORDS (DUE)
+  // ══════════════════════════════════════════════════════════════════════════
+  'DUE-001': { libelle: 'DUE Prévoyance', tarif: 200, unite: '€/document' },
+  'DUE-002': { libelle: 'DUE Frais de santé', tarif: 200, unite: '€/document' },
+  'DUE-003': { libelle: 'DUE Retraite supplémentaire', tarif: 200, unite: '€/document' },
+  'DUE-004': { libelle: 'DUE Prime exceptionnelle (PPV)', tarif: 275, unite: '€/document' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PROCÉDURES & RUPTURES
+  // ══════════════════════════════════════════════════════════════════════════
+  'RUP-001': { libelle: 'Rupture conventionnelle', tarif: 350, unite: '€/dossier' },
+  'LIC-001': { libelle: 'Licenciement faute grave', tarif: 200, unite: '€/dossier' },
+  'LIC-002': { libelle: 'Abandon de poste', tarif: 170, unite: '€/dossier' },
+  'LIC-003': { libelle: 'Inaptitude (procédure)', tarif: 500, unite: '€/dossier' },
+  'LIC-004': { libelle: 'Licenciement économique', tarif: 750, unite: '€/dossier' },
+  'RUP-002': { libelle: 'Rupture anticipée CDD', tarif: 200, unite: '€/dossier' },
+  'RUP-003': { libelle: 'Rupture contrat alternance', tarif: 200, unite: '€/dossier' },
+  'RUP-004': { libelle: "Fin période d'essai", tarif: 120, unite: '€/dossier' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // CALCUL INDEMNITÉS RUPTURE
+  // ══════════════════════════════════════════════════════════════════════════
+  'IND-001': { libelle: 'Calcul indemnité retraite', tarif: 110, unite: '€/calcul' },
+  'IND-002': { libelle: 'Calcul indemnité rupture conv.', tarif: 165, unite: '€/calcul' },
+  'IND-003': { libelle: 'Calcul indemnité inaptitude', tarif: 220, unite: '€/calcul' },
+  'IND-004': { libelle: 'Calcul indemnité lic. éco', tarif: 330, unite: '€/calcul' },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // AUTRES MISSIONS
+  // ══════════════════════════════════════════════════════════════════════════
+  'ACC-001': { libelle: 'Création accès Net-Entreprises', tarif: 75, unite: '€/organisme' },
+  'FOR-001': { libelle: 'Dossier remboursement OPCO', tarif: 150, unite: '€/dossier' },
+  'ACT-001': { libelle: 'Activité partielle (demande)', tarif: 150, unite: '€/demande' },
+  'ACT-002': { libelle: 'Activité partielle (mensuel)', tarif: 15, unite: '€/mois/sal.' },
+  'AID-001': { libelle: "Aides embauche (suivi)", tarif: 15, unite: '€/trim./sal.' },
+  'CON-001': { libelle: 'Conseil/Assistance RH', tarif: 120, unite: '€/heure' },
+};
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║   CATÉGORIES (pour l'affichage dans les menus déroulants)                  ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+const CATEGORIES = [
+  { id: 'audit', label: 'Audit & Démarrage', refs: ['AUD-001', 'MIS-001', 'REP-001'] },
+  { id: 'bulletins', label: 'Bulletins & Déclarations', refs: ['BUL-001', 'BUL-004', 'ENV-001', 'ENV-002', 'CHS-001'] },
+  { id: 'gestion', label: 'Gestion courante', refs: ['ENT-001', 'MED-001', 'MED-002', 'MUT-001', 'MUT-002', 'STC-001', 'ATT-001', 'DAT-001', 'PRV-001', 'SIM-001'] },
+  { id: 'btp', label: 'Spécificités BTP', refs: ['BTP-001', 'BTP-002', 'BTP-003'] },
+  { id: 'contrats', label: 'Contrats de travail', refs: ['CDI-001', 'CDD-001', 'SAI-001', 'EXT-001', 'AVE-001', 'AVE-002', 'LET-001'] },
+  { id: 'due', label: 'Décisions unilatérales', refs: ['DUE-001', 'DUE-002', 'DUE-003', 'DUE-004'] },
+  { id: 'procedures', label: 'Procédures & Ruptures', refs: ['RUP-001', 'LIC-001', 'LIC-002', 'LIC-003', 'LIC-004', 'RUP-002', 'RUP-003', 'RUP-004'] },
+  { id: 'indemnites', label: 'Calcul indemnités', refs: ['IND-001', 'IND-002', 'IND-003', 'IND-004'] },
+  { id: 'autres', label: 'Autres missions', refs: ['ACC-001', 'FOR-001', 'ACT-001', 'ACT-002', 'AID-001', 'CON-001'] },
+];
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║   CONVENTIONS COLLECTIVES                                                   ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+const CONVENTIONS = [
+  'Commerce de gros',
+  'Syntec',
+  'BTP Ouvriers',
+  'BTP ETAM',
+  'BTP Cadres',
+  'HCR',
+  'Métallurgie',
+  'Transport routier',
+  'Associations (ECLAT)',
+  'Services à la personne',
+  'Pharmacie',
+  'Cabinets comptables',
+  'Immobilier',
+  'Autre'
+];
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║   TARIFS FORFAIT MENSUEL (modifiables)                                     ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+const FORFAIT_CONFIG = {
+  bulletinMoins20: 20,    // Prix bulletin pour 1-20 salariés
+  bulletinPlus20: 15,     // Prix bulletin pour +20 salariés
+  coffreFort: 2,          // Prix envoi coffre-fort par salarié
+  entree: 15,             // Prix entrée salarié
+  sortie: 50,             // Prix sortie salarié (STC)
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FIN DE LA ZONE MODIFIABLE
+// ══════════════════════════════════════════════════════════════════════════════
+</script>
+
+<!-- Header -->
+<header class="header">
+  <div>
+    <svg width="280" height="90" viewBox="0 0 1200 400" role="img" aria-label="Nexus Paies Conseils">
+      <g transform="translate(40,80)">
+        <rect x="0" y="40" width="16" height="180" fill="#0c1b2a"/>
+        <rect x="44" y="0" width="16" height="260" fill="#0c1b2a"/>
+        <rect x="88" y="40" width="16" height="180" fill="#c7a86e"/>
+      </g>
+      <g transform="translate(180,120)">
+        <text x="0" y="80" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="800" font-size="120" fill="#0c1b2a">NEXUS</text>
+        <rect x="0" y="120" width="760" height="4" fill="#c7a86e"/>
+        <text x="0" y="190" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="600" font-size="44" letter-spacing="10" fill="#c7a86e">PAIES CONSEILS</text>
+      </g>
+    </svg>
+  </div>
+  <div>
+    <span class="date-label" id="currentDate"></span>
+  </div>
+</header>
+
+<!-- Title Bar -->
+<div class="title-bar">
+  <h1 class="main-title">CALCULATEUR DE DEVIS</h1>
+</div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <button class="nav-btn active" data-mode="devis" onclick="switchMode('devis')">
+    <span>📋</span> Devis personnalisé
+  </button>
+  <button class="nav-btn" data-mode="forfait" onclick="switchMode('forfait')">
+    <span>📊</span> Forfait mensuel
+  </button>
+  <button class="nav-btn" data-mode="grille" onclick="switchMode('grille')">
+    <span>💰</span> Grille tarifaire
+  </button>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+  
+  <!-- MODE DEVIS -->
+  <div id="mode-devis">
+    <!-- Infos client -->
+    <section class="section">
+      <h2 class="section-title"><span>👤</span> Informations client</h2>
+      <div class="form-grid">
+        <div class="form-group-full">
+          <label class="label">Raison sociale</label>
+          <input type="text" class="input" id="raisonSociale" placeholder="Ex: SARL Dupont & Fils">
+        </div>
+        <div class="form-group">
+          <label class="label">Nom</label>
+          <input type="text" class="input" id="clientNom" placeholder="Ex: Dupont">
+        </div>
+        <div class="form-group">
+          <label class="label">Prénom</label>
+          <input type="text" class="input" id="clientPrenom" placeholder="Ex: Jean">
+        </div>
+        <div class="form-group-full">
+          <label class="label">Adresse</label>
+          <input type="text" class="input" id="clientAdresse" placeholder="Ex: 12 rue des Lilas">
+        </div>
+        <div class="form-group">
+          <label class="label">Code postal</label>
+          <input type="text" class="input" id="clientCP" placeholder="Ex: 75001" maxlength="5">
+        </div>
+        <div class="form-group">
+          <label class="label">Ville</label>
+          <input type="text" class="input" id="clientVille" placeholder="Ex: Paris">
+        </div>
+        <div class="form-group">
+          <label class="label">N° SIRET</label>
+          <input type="text" class="input" id="clientSiret" placeholder="Ex: 123 456 789 00012" maxlength="17">
+        </div>
+        <div class="form-group">
+          <label class="label">Code APE</label>
+          <input type="text" class="input" id="clientApe" placeholder="Ex: 6920Z" maxlength="6">
+        </div>
+        <div class="form-group">
+          <label class="label">Nombre de salariés</label>
+          <input type="number" class="input" id="clientSalaries" placeholder="Ex: 15" min="0">
+        </div>
+        <div class="form-group">
+          <label class="label">Convention collective</label>
+          <select class="select" id="clientConvention">
+            <option value="">Sélectionner...</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prestations -->
+    <section class="section">
+      <h2 class="section-title"><span>📝</span> Prestations</h2>
+      <div class="table-container">
+        <div class="table-header">
+          <span style="flex:3;padding:0 8px">Prestation</span>
+          <span style="flex:1;padding:0 8px;text-align:center">Tarif</span>
+          <span style="flex:1;padding:0 8px;text-align:center">Quantité</span>
+          <span style="flex:1;padding:0 8px;text-align:center">Total HT</span>
+          <span style="flex:2;padding:0 8px">Notes</span>
+          <span style="width:50px"></span>
+        </div>
+        <div id="lignesContainer"></div>
+      </div>
+      <button class="add-btn" onclick="addLigne()">
+        <span>+</span> Ajouter une ligne
+      </button>
+    </section>
+
+    <!-- Total -->
+    <section class="total-section">
+      <div class="total-grid">
+        <div class="total-label">Total HT</div>
+        <div class="total-amount" id="totalHT">0.00 €</div>
+      </div>
+      <div class="tva-note">TVA non applicable - Article 293B du CGI (franchise en base)</div>
+      <div class="total-grid">
+        <div class="net-label">NET À PAYER</div>
+        <div class="net-amount" id="totalNet">0.00 €</div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="preview-btn" onclick="showPreview()">
+        👁️ Prévisualiser le devis
+      </button>
+    </div>
+  </div>
+
+  <!-- MODE FORFAIT -->
+  <div id="mode-forfait" class="hidden">
+    <section class="section">
+      <h2 class="section-title"><span>📊</span> Simulateur forfait mensuel</h2>
+      <div class="forfait-grid">
+        <div class="forfait-card">
+          <label class="forfait-label">Nombre de salariés</label>
+          <input type="number" class="forfait-input" id="forfaitSalaries" value="5" min="0" onchange="calculerForfait()">
+        </div>
+        <div class="forfait-card">
+          <label class="forfait-label">Entrées estimées /mois (15 €/sal.)</label>
+          <input type="number" class="forfait-input" id="forfaitEntrees" value="0" min="0" onchange="calculerForfait()">
+        </div>
+        <div class="forfait-card">
+          <label class="forfait-label">Sorties estimées /mois (50 €/sal.)</label>
+          <input type="number" class="forfait-input" id="forfaitSorties" value="0" min="0" onchange="calculerForfait()">
+        </div>
+        <div class="forfait-card">
+          <label class="checkbox-label">
+            <input type="checkbox" id="forfaitCoffre" checked onchange="calculerForfait()">
+            Coffre-fort électronique
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="result-section">
+      <h3 class="result-title">Détail de l'estimation</h3>
+      <div id="forfaitDetails"></div>
+      <div class="result-total">
+        <div class="result-total-line">
+          <span class="result-total-label">FORFAIT MENSUEL HT</span>
+          <span class="result-total-amount" id="forfaitMensuel">0.00 €</span>
+        </div>
+        <div class="result-total-line">
+          <span class="result-total-label">FORFAIT ANNUEL HT</span>
+          <span class="result-total-amount" id="forfaitAnnuel">0.00 €</span>
+        </div>
+      </div>
+      <p class="disclaimer">Ce simulateur donne une estimation indicative. Le tarif définitif sera établi après analyse détaillée du dossier.</p>
+    </section>
+  </div>
+
+  <!-- MODE GRILLE -->
+  <div id="mode-grille" class="hidden">
+    <section class="section">
+      <h2 class="section-title"><span>💰</span> Grille tarifaire 2025</h2>
+      <div id="grilleContainer"></div>
+    </section>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <p class="footer-text"><strong>Nexus Paies Conseils</strong> — Lauriane GERMANY - Consultante paie & RH</p>
+  <p class="footer-small">Devis valable 30 jours • Règlement à réception par virement • TVA non applicable - Art. 293B CGI</p>
+</footer>
+
+<!-- Modal Preview -->
+<div id="modalPreview" class="modal-overlay hidden" onclick="closePreview()">
+  <div class="modal-container" onclick="event.stopPropagation()">
+    <div class="modal-actions">
+      <h3 class="modal-title">Prévisualisation du devis</h3>
+      <div class="modal-buttons">
+        <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+        <button class="close-btn" onclick="closePreview()">✕ Fermer</button>
+      </div>
+    </div>
+    <div class="print-area" id="printArea"></div>
+  </div>
+</div>
+
+<script>
+// Variables globales
+let lignes = [];
+let ligneId = 0;
+let numeroDevis = '';
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+  // Date
+  const today = new Date().toLocaleDateString('fr-FR');
+  document.getElementById('currentDate').textContent = 'Date : ' + today;
+  
+  // Conventions
+  const selectConv = document.getElementById('clientConvention');
+  CONVENTIONS.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    selectConv.appendChild(opt);
+  });
+  
+  // Première ligne
+  addLigne();
+  
+  // Grille tarifaire
+  renderGrille();
+  
+  // Forfait initial
+  calculerForfait();
+});
+
+// Navigation
+function switchMode(mode) {
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+  
+  document.getElementById('mode-devis').classList.toggle('hidden', mode !== 'devis');
+  document.getElementById('mode-forfait').classList.toggle('hidden', mode !== 'forfait');
+  document.getElementById('mode-grille').classList.toggle('hidden', mode !== 'grille');
+}
+
+// Lignes de devis
+function addLigne() {
+  ligneId++;
+  lignes.push({ id: ligneId, ref: '', qte: '', notes: '' });
+  renderLignes();
+}
+
+function removeLigne(id) {
+  if (lignes.length > 1) {
+    lignes = lignes.filter(l => l.id !== id);
+    renderLignes();
+    calculerTotal();
+  }
+}
+
+function updateLigne(id, field, value) {
+  const ligne = lignes.find(l => l.id === id);
+  if (ligne) {
+    ligne[field] = value;
+    renderLignes();
+    calculerTotal();
+  }
+}
+
+function renderLignes() {
+  const container = document.getElementById('lignesContainer');
+  container.innerHTML = lignes.map(ligne => {
+    const tarif = ligne.ref && TARIFS[ligne.ref] ? TARIFS[ligne.ref].tarif : 0;
+    const total = ligne.ref && ligne.qte ? (tarif * parseFloat(ligne.qte)).toFixed(2) : '-';
+    
+    return `
+      <div class="table-row">
+        <div style="flex:3">
+          <select class="select-small" onchange="updateLigne(${ligne.id}, 'ref', this.value)" value="${ligne.ref}">
+            <option value="">Choisir une prestation...</option>
+            ${CATEGORIES.map(cat => `
+              <optgroup label="${cat.label}">
+                ${cat.refs.map(ref => `
+                  <option value="${ref}" ${ligne.ref === ref ? 'selected' : ''}>
+                    ${TARIFS[ref].libelle} (${TARIFS[ref].tarif} ${TARIFS[ref].unite})
+                  </option>
+                `).join('')}
+              </optgroup>
+            `).join('')}
+          </select>
+        </div>
+        <div style="flex:1;text-align:center;padding:0 8px">
+          <span class="tarif-display">${ligne.ref ? tarif + ' €' : '-'}</span>
+        </div>
+        <div style="flex:1">
+          <input type="number" class="input-small" value="${ligne.qte}" 
+                 onchange="updateLigne(${ligne.id}, 'qte', this.value)" 
+                 placeholder="Qté" min="0" step="0.5">
+        </div>
+        <div style="flex:1;text-align:center">
+          <span class="total-ligne">${total !== '-' ? total + ' €' : '-'}</span>
+        </div>
+        <div style="flex:2">
+          <input type="text" class="input-small" value="${ligne.notes}" 
+                 onchange="updateLigne(${ligne.id}, 'notes', this.value)" 
+                 placeholder="Notes...">
+        </div>
+        <div style="width:50px;text-align:center">
+          ${lignes.length > 1 ? `<button class="remove-btn" onclick="removeLigne(${ligne.id})">×</button>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function calculerTotal() {
+  const total = lignes.reduce((sum, l) => {
+    if (l.ref && l.qte && TARIFS[l.ref]) {
+      return sum + (TARIFS[l.ref].tarif * parseFloat(l.qte || 0));
+    }
+    return sum;
+  }, 0);
+  
+  document.getElementById('totalHT').textContent = total.toFixed(2) + ' €';
+  document.getElementById('totalNet').textContent = total.toFixed(2) + ' €';
+  return total;
+}
+
+// Forfait
+function calculerForfait() {
+  const n = parseInt(document.getElementById('forfaitSalaries').value) || 0;
+  const entrees = parseInt(document.getElementById('forfaitEntrees').value) || 0;
+  const sorties = parseInt(document.getElementById('forfaitSorties').value) || 0;
+  const coffre = document.getElementById('forfaitCoffre').checked;
+  
+  const prixBulletin = n <= 20 ? FORFAIT_CONFIG.bulletinMoins20 : FORFAIT_CONFIG.bulletinPlus20;
+  const montantBulletins = n * prixBulletin;
+  const montantCoffre = coffre ? n * FORFAIT_CONFIG.coffreFort : 0;
+  const montantEntrees = entrees * FORFAIT_CONFIG.entree;
+  const montantSorties = sorties * FORFAIT_CONFIG.sortie;
+  const total = montantBulletins + montantCoffre + montantEntrees + montantSorties;
+  
+  let details = `<div class="result-line"><span>Bulletins de paie (${n} sal. × ${prixBulletin} €)</span><span class="result-amount">${montantBulletins.toFixed(2)} €</span></div>`;
+  if (coffre) {
+    details += `<div class="result-line"><span>Envoi coffre-fort (${n} sal. × ${FORFAIT_CONFIG.coffreFort} €)</span><span class="result-amount">${montantCoffre.toFixed(2)} €</span></div>`;
+  }
+  if (entrees > 0) {
+    details += `<div class="result-line"><span>Entrées salarié (${entrees} × ${FORFAIT_CONFIG.entree} €)</span><span class="result-amount">${montantEntrees.toFixed(2)} €</span></div>`;
+  }
+  if (sorties > 0) {
+    details += `<div class="result-line"><span>Sorties salarié - STC (${sorties} × ${FORFAIT_CONFIG.sortie} €)</span><span class="result-amount">${montantSorties.toFixed(2)} €</span></div>`;
+  }
+  
+  document.getElementById('forfaitDetails').innerHTML = details;
+  document.getElementById('forfaitMensuel').textContent = total.toFixed(2) + ' €';
+  document.getElementById('forfaitAnnuel').textContent = (total * 12).toFixed(2) + ' €';
+}
+
+// Grille tarifaire
+function renderGrille() {
+  const container = document.getElementById('grilleContainer');
+  container.innerHTML = CATEGORIES.map(cat => `
+    <div class="grille-categorie">
+      <h3 class="grille-cat-title">${cat.label}</h3>
+      <div class="grille-table">
+        ${cat.refs.map(ref => `
+          <div class="grille-line">
+            <span class="grille-ref">${ref}</span>
+            <span class="grille-libelle">${TARIFS[ref].libelle}</span>
+            <span class="grille-tarif">${TARIFS[ref].tarif} €</span>
+            <span class="grille-unite">${TARIFS[ref].unite}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Prévisualisation
+function genererNumeroDevis() {
+  const now = new Date();
+  const annee = now.getFullYear();
+  const mois = String(now.getMonth() + 1).padStart(2, '0');
+  const random = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
+  return `${annee}-${mois}-${random}`;
+}
+
+function showPreview() {
+  if (!numeroDevis) {
+    numeroDevis = genererNumeroDevis();
+  }
+  
+  const today = new Date().toLocaleDateString('fr-FR');
+  const total = calculerTotal();
+  
+  const client = {
+    raisonSociale: document.getElementById('raisonSociale').value,
+    nom: document.getElementById('clientNom').value,
+    prenom: document.getElementById('clientPrenom').value,
+    adresse: document.getElementById('clientAdresse').value,
+    cp: document.getElementById('clientCP').value,
+    ville: document.getElementById('clientVille').value,
+    siret: document.getElementById('clientSiret').value,
+    ape: document.getElementById('clientApe').value,
+    salaries: document.getElementById('clientSalaries').value,
+    convention: document.getElementById('clientConvention').value
+  };
+  
+  const lignesValides = lignes.filter(l => l.ref && l.qte);
+  
+  document.getElementById('printArea').innerHTML = `
+    <div class="print-header">
+      <svg width="240" height="80" viewBox="0 0 1200 400" role="img">
+        <g transform="translate(40,80)">
+          <rect x="0" y="40" width="16" height="180" fill="#0c1b2a"/>
+          <rect x="44" y="0" width="16" height="260" fill="#0c1b2a"/>
+          <rect x="88" y="40" width="16" height="180" fill="#c7a86e"/>
+        </g>
+        <g transform="translate(180,120)">
+          <text x="0" y="80" font-family="Inter,sans-serif" font-weight="800" font-size="120" fill="#0c1b2a">NEXUS</text>
+          <rect x="0" y="120" width="760" height="4" fill="#c7a86e"/>
+          <text x="0" y="190" font-family="Inter,sans-serif" font-weight="600" font-size="44" letter-spacing="10" fill="#c7a86e">PAIES CONSEILS</text>
+        </g>
+      </svg>
+      <p class="print-contact">Lauriane GERMANY - Consultante paie & RH</p>
+    </div>
+    
+    <div class="print-title-row">
+      <h2 class="print-title">DEVIS N° ${numeroDevis}</h2>
+      <p class="print-date">Date : ${today}</p>
+    </div>
+    
+    <div class="print-client">
+      <p class="print-client-name">${client.raisonSociale || 'Client non renseigné'}</p>
+      ${client.nom || client.prenom ? `<p>${client.prenom} ${client.nom}</p>` : ''}
+      ${client.adresse ? `<p>${client.adresse}</p>` : ''}
+      ${client.cp || client.ville ? `<p>${client.cp} ${client.ville}</p>` : ''}
+      <div class="print-client-info">
+        ${client.siret ? `<span><strong>SIRET :</strong> ${client.siret}</span>` : ''}
+        ${client.ape ? `<span><strong>Code APE :</strong> ${client.ape}</span>` : ''}
+      </div>
+      <div class="print-client-info">
+        ${client.salaries ? `<span><strong>Effectif :</strong> ${client.salaries} salarié(s)</span>` : ''}
+        ${client.convention ? `<span><strong>CCN :</strong> ${client.convention}</span>` : ''}
+      </div>
+    </div>
+    
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th>Prestation</th>
+          <th>Réf.</th>
+          <th>Qté</th>
+          <th>P.U. HT</th>
+          <th>Total HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lignesValides.map(l => `
+          <tr>
+            <td>${TARIFS[l.ref].libelle}</td>
+            <td class="center">${l.ref}</td>
+            <td class="center">${l.qte}</td>
+            <td class="right">${TARIFS[l.ref].tarif.toFixed(2)} €</td>
+            <td class="right">${(TARIFS[l.ref].tarif * parseFloat(l.qte)).toFixed(2)} €</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    
+    <div class="print-totals">
+      <p><strong>TOTAL HT :</strong> ${total.toFixed(2)} €</p>
+      <p class="print-tva">TVA non applicable - Article 293B du CGI</p>
+      <p class="print-net"><strong>NET À PAYER : ${total.toFixed(2)} €</strong></p>
+    </div>
+    
+    <div class="print-accord">
+      <div class="print-accord-left">
+        <p class="print-accord-title">Bon pour accord</p>
+        <p class="print-accord-text">Date : ____________________</p>
+        <p class="print-accord-text">Signature précédée de la mention « Bon pour accord » :</p>
+        <div class="print-signature-box"></div>
+      </div>
+      <div class="print-accord-right">
+        <p class="print-accord-note">En signant ce devis, le client reconnaît avoir pris connaissance des conditions générales de vente et les accepte sans réserve.</p>
+      </div>
+    </div>
+    
+    <div class="print-footer">
+      <p>Devis valable 30 jours • Règlement à réception par virement bancaire</p>
+      <p>Nexus Paies Conseils — Île-de-France</p>
+    </div>
+  `;
+  
+  document.getElementById('modalPreview').classList.remove('hidden');
+}
+
+function closePreview() {
+  document.getElementById('modalPreview').classList.add('hidden');
+}
+</script>
+
+</body>
+</html>
