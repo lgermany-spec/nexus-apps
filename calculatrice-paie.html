@@ -792,19 +792,19 @@
           <button class="calc-btn calc-btn-func" onclick="calcClear()">C</button>
           <button class="calc-btn calc-btn-func" onclick="calcPlusMinus()">±</button>
           <button class="calc-btn calc-btn-func" onclick="calcPercent()">%</button>
-          <button class="calc-btn calc-btn-op" onclick="calcOperator('÷')">÷</button>
+          <button class="calc-btn calc-btn-op" onclick="setCalcOperator('÷')">÷</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('7')">7</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('8')">8</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('9')">9</button>
-          <button class="calc-btn calc-btn-op" onclick="calcOperator('×')">×</button>
+          <button class="calc-btn calc-btn-op" onclick="setCalcOperator('×')">×</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('4')">4</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('5')">5</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('6')">6</button>
-          <button class="calc-btn calc-btn-op" onclick="calcOperator('-')">−</button>
+          <button class="calc-btn calc-btn-op" onclick="setCalcOperator('-')">−</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('1')">1</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('2')">2</button>
           <button class="calc-btn calc-btn-num" onclick="calcNumber('3')">3</button>
-          <button class="calc-btn calc-btn-op" onclick="calcOperator('+')">+</button>
+          <button class="calc-btn calc-btn-op" onclick="setCalcOperator('+')">+</button>
           <button class="calc-btn calc-btn-num calc-btn-span2" onclick="calcNumber('0')">0</button>
           <button class="calc-btn calc-btn-num" onclick="calcDecimal()">.</button>
           <button class="calc-btn calc-btn-op" onclick="calcEquals()">=</button>
@@ -1345,7 +1345,7 @@
     // State
     let calcDisplay = '0';
     let calcPrevious = null;
-    let calcOperator = null;
+    let calcOp = null;
     let calcNewNumber = true;
     
     let ijssMode = 'maladie';
@@ -1498,7 +1498,7 @@
     
     function updateCalcDisplay() {
       document.getElementById('calc-current').textContent = calcDisplay;
-      document.getElementById('calc-previous').textContent = calcPrevious !== null ? `${calcPrevious} ${calcOperator}` : '';
+      document.getElementById('calc-previous').textContent = calcPrevious !== null ? `${calcPrevious} ${calcOp}` : '';
     }
     
     function calcNumber(num) {
@@ -1521,16 +1521,16 @@
       updateCalcDisplay();
     }
     
-    function calcOperator(op) {
+    function setCalcOperator(op) {
       const current = parseFloat(calcDisplay);
       if (calcPrevious !== null && !calcNewNumber) {
-        const result = calculate(calcPrevious, current, calcOperator);
+        const result = calculate(calcPrevious, current, calcOp);
         calcDisplay = String(result);
         calcPrevious = result;
       } else {
         calcPrevious = current;
       }
-      calcOperator = op;
+      calcOp = op;
       calcNewNumber = true;
       updateCalcDisplay();
     }
@@ -1546,12 +1546,12 @@
     }
     
     function calcEquals() {
-      if (calcPrevious !== null && calcOperator) {
+      if (calcPrevious !== null && calcOp) {
         const current = parseFloat(calcDisplay);
-        const result = calculate(calcPrevious, current, calcOperator);
+        const result = calculate(calcPrevious, current, calcOp);
         calcDisplay = String(Math.round(result * 100) / 100);
         calcPrevious = null;
-        calcOperator = null;
+        calcOp = null;
         calcNewNumber = true;
         updateCalcDisplay();
       }
@@ -1560,7 +1560,7 @@
     function calcClear() {
       calcDisplay = '0';
       calcPrevious = null;
-      calcOperator = null;
+      calcOp = null;
       calcNewNumber = true;
       updateCalcDisplay();
     }
