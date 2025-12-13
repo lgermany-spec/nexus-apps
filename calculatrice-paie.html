@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculatrice Paie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      background: #f8fafc;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+    
+    .header-icon svg {
+      width: 28px;
+      height: 28px;
+      color: white;
+      stroke: white;
+      fill: none;
+    }
+    
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    .header p {
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+    
+    /* Navigation */
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .nav-btn {
+      padding: 0.625rem 1rem;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    
+    .nav-btn:hover {
+      background: #f1f5f9;
+    }
+    
+    .nav-btn.active {
+      border: none;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+    }
+    
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    /* Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    @media (min-width: 1024px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    /* Form elements */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-input, .form-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      color: #1e293b;
+      background: white;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    
+    .btn-emerald {
+      background: #10b981;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-pink {
+      background: #ec4899;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.3);
+    }
+    
+    .btn-sky {
+      background: #0ea5e9;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+    }
+    
+    .btn-violet {
+      background: #8b5cf6;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);
+    }
+    
+    .btn-block {
+      width: 100%;
+    }
+    
+    /* Toggle buttons */
+    .toggle-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .toggle-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      background: #f1f5f9;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .toggle-btn:hover {
+      background: #e2e8f0;
+    }
+    
+    .toggle-btn.active {
+      background: #10b981;
+      color: white;
+    }
+    
+    .toggle-btn.active-pink {
+      background: #ec4899;
+      color: white;
+    }
+    
+    .toggle-btn.active-sky {
+      background: #0ea5e9;
+      color: white;
+    }
+    
+    /* Results */
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .result-row:last-child {
+      border-bottom: none;
+    }
+    
+    .result-label {
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+    
+    .result-value {
+      color: #1e293b;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .result-highlight {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    
+    .result-highlight-pink {
+      background: #fdf2f8;
+      border-color: #fbcfe8;
+    }
+    
+    .result-highlight-sky {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+    }
+    
+    .result-big {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #059669;
+    }
+    
+    .result-big-pink {
+      color: #db2777;
+    }
+    
+    .result-big-sky {
+      color: #0284c7;
+    }
+    
+    /* Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .timeline-content {
+      flex: 1;
+    }
+    
+    .timeline-title {
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+    
+    .timeline-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+    
+    .timeline-value {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    /* Calculator */
+    .calc-display {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .calc-previous {
+      height: 1.5rem;
+      text-align: right;
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+    
+    .calc-current {
+      text-align: right;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+    
+    .calc-btn {
+      height: 56px;
+      border-radius: 12px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .calc-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .calc-btn-num {
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+    
+    .calc-btn-num:hover {
+      background: #e2e8f0;
+    }
+    
+    .calc-btn-op {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .calc-btn-op:hover {
+      background: #2563eb;
+    }
+    
+    .calc-btn-func {
+      background: #cbd5e1;
+      color: #475569;
+    }
+    
+    .calc-btn-func:hover {
+      background: #94a3b8;
+    }
+    
+    .calc-btn-span2 {
+      grid-column: span 2;
+    }
+    
+    /* Reference table */
+    .ref-table {
+      width: 100%;
+      font-size: 0.875rem;
+      border-collapse: collapse;
+    }
+    
+    .ref-table th, .ref-table td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .ref-table th {
+      color: #64748b;
+      font-weight: 500;
+    }
+    
+    .ref-table td {
+      color: #374151;
+    }
+    
+    /* Info box */
+    .info-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .info-box-amber {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    
+    .info-box-pink {
+      background: #fdf2f8;
+      border-color: #fbcfe8;
+    }
+    
+    .info-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .info-list {
+      font-size: 0.875rem;
+      color: #475569;
+      padding-left: 1rem;
+    }
+    
+    .info-list li {
+      margin-bottom: 0.25rem;
+    }
+    
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    
+    .checkbox-item:hover {
+      background: #f1f5f9;
+    }
+    
+    .checkbox-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+    }
+    
+    /* Radio */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .radio-item:hover {
+      background: #f1f5f9;
+    }
+    
+    .radio-item.active {
+      background: #f0f9ff;
+      border-color: #7dd3fc;
+    }
+    
+    .radio-item input[type="radio"] {
+      width: 18px;
+      height: 18px;
+    }
+    
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .badge-amber {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .badge-red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .badge-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    /* Alert */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    
+    .alert-amber {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+    
+    .alert-green {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+    
+    /* Months input row */
+    .month-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .month-number {
+      width: 28px;
+      height: 28px;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    
+    .month-select {
+      width: 100px;
+      padding: 0.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    
+    .month-input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    
+    .month-input:focus, .month-select:focus {
+      outline: none;
+      border-color: #10b981;
+    }
+    
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .stat-box {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 12px;
+      background: #f1f5f9;
+    }
+    
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    .stat-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+    
+    /* Feries list */
+    .feries-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .ferie-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .ferie-item.highlight {
+      background: #fef3c7;
+      border-color: #fcd34d;
+    }
+    
+    .ferie-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.75rem;
+    }
+    
+    /* Hidden */
+    .hidden {
+      display: none !important;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 1.25rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .month-row {
+        flex-wrap: wrap;
+      }
+      
+      .month-select {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Calculatrice Paie</h1>
+        <p>Outils essentiels du gestionnaire de paie</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+      <button class="nav-btn active" data-module="calculatrice" style="background:#3b82f6;color:white;">
+        <span>🧮</span> Calculatrice
+      </button>
+      <button class="nav-btn" data-module="ijss">
+        <span>🏥</span> Calcul IJSS
+      </button>
+      <button class="nav-btn" data-module="maternite">
+        <span>🤰</span> Congé Maternité
+      </button>
+      <button class="nav-btn" data-module="paternite">
+        <span>👶</span> Congé Paternité
+      </button>
+      <button class="nav-btn" data-module="heures">
+        <span>⏱️</span> Heures / Absences
+      </button>
+      <button class="nav-btn" data-module="jours">
+        <span>📅</span> Jours du mois
+      </button>
+    </div>
+
+    <!-- Modules -->
+    <div id="module-calculatrice" class="module">
+      <div class="card" style="max-width:400px;margin:0 auto;">
+        <div class="calc-display">
+          <div class="calc-previous mono" id="calc-previous"></div>
+          <div class="calc-current mono" id="calc-current">0</div>
+        </div>
+        <div class="calc-grid">
+          <button class="calc-btn calc-btn-func" onclick="calcClear()">C</button>
+          <button class="calc-btn calc-btn-func" onclick="calcPlusMinus()">±</button>
+          <button class="calc-btn calc-btn-func" onclick="calcPercent()">%</button>
+          <button class="calc-btn calc-btn-op" onclick="calcOperator('÷')">÷</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('7')">7</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('8')">8</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('9')">9</button>
+          <button class="calc-btn calc-btn-op" onclick="calcOperator('×')">×</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('4')">4</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('5')">5</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('6')">6</button>
+          <button class="calc-btn calc-btn-op" onclick="calcOperator('-')">−</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('1')">1</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('2')">2</button>
+          <button class="calc-btn calc-btn-num" onclick="calcNumber('3')">3</button>
+          <button class="calc-btn calc-btn-op" onclick="calcOperator('+')">+</button>
+          <button class="calc-btn calc-btn-num calc-btn-span2" onclick="calcNumber('0')">0</button>
+          <button class="calc-btn calc-btn-num" onclick="calcDecimal()">.</button>
+          <button class="calc-btn calc-btn-op" onclick="calcEquals()">=</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="module-ijss" class="module hidden">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#dcfce7;">🏥</div>
+          <h2 class="card-title">Calcul des Indemnités Journalières (IJSS)</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label">Type d'arrêt</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active" onclick="setIjssMode('maladie', this)">Maladie</button>
+                <button class="toggle-btn" onclick="setIjssMode('maternite', this)">Maternité/Paternité</button>
+                <button class="toggle-btn" onclick="setIjssMode('at', this)">AT/MP</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Date de début de l'arrêt</label>
+              <input type="date" id="ijss-date-arret" class="form-input" value="2025-04-01" onchange="checkIjssRegime()">
+              <div id="ijss-regime-alert" class="alert alert-amber" style="margin-top:0.5rem;">
+                ⚠️ Nouveau régime (depuis 01/04/2025) : plafond 1,4 × SMIC
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Salaires bruts des 3 mois de référence</label>
+              <div id="ijss-mois-container"></div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Nombre de jours d'arrêt</label>
+              <input type="number" id="ijss-jours" class="form-input mono" placeholder="Ex: 15">
+              <small style="color:#64748b;font-size:0.75rem;">Carence : <span id="ijss-carence-info">3 jours</span></small>
+            </div>
+            
+            <div class="form-group" id="ijss-enfants-group">
+              <label class="form-label">Enfants à charge</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active" onclick="setEnfants(0, this)">0</button>
+                <button class="toggle-btn" onclick="setEnfants(1, this)">1</button>
+                <button class="toggle-btn" onclick="setEnfants(2, this)">2</button>
+                <button class="toggle-btn" onclick="setEnfants(3, this)">3+</button>
+              </div>
+              <small style="color:#64748b;font-size:0.75rem;">Taux majoré (66,67%) à partir de 3 enfants</small>
+            </div>
+            
+            <button class="btn btn-emerald btn-block" onclick="calculerIJSS()">Calculer les IJSS</button>
+          </div>
+          
+          <div id="ijss-results" class="hidden">
+            <div id="ijss-regime-box" class="info-box info-box-amber" style="margin-bottom:1rem;">
+              <div class="info-title">⚠️ Régime Nouveau (1,4 × SMIC)</div>
+              <div style="color:#64748b;font-size:0.875rem;">Arrêt du <span id="ijss-date-result"></span></div>
+            </div>
+            
+            <div class="result-box" style="margin-bottom:1rem;">
+              <h4 style="font-size:0.875rem;font-weight:600;color:#475569;margin-bottom:0.75rem;">Détail des salaires</h4>
+              <div id="ijss-detail-mois"></div>
+              <div class="result-row" style="border-top:1px solid #e2e8f0;margin-top:0.5rem;padding-top:0.5rem;">
+                <span style="font-weight:600;color:#374151;">Total plafonné</span>
+                <span class="mono" style="font-weight:700;" id="ijss-total-plafonne"></span>
+              </div>
+            </div>
+            
+            <div class="result-box">
+              <h4 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:1rem;">Résultat</h4>
+              <div class="result-row">
+                <span class="result-label">SJR (÷ 91,25)</span>
+                <span class="result-value mono" id="ijss-sjr"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Taux</span>
+                <span class="result-value" id="ijss-taux"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">IJSS/jour brute</span>
+                <span class="result-value mono" id="ijss-jour-brut"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">IJSS/jour nette</span>
+                <span class="result-value mono" style="color:#059669;" id="ijss-jour-net"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Carence / Indemnisés</span>
+                <span class="result-value" id="ijss-jours-info"></span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:0.75rem;text-align:center;">
+                  <div style="font-size:0.75rem;color:#64748b;">Total brut</div>
+                  <div class="mono" style="font-size:1.25rem;font-weight:700;" id="ijss-total-brut"></div>
+                </div>
+                <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:0.75rem;text-align:center;">
+                  <div style="font-size:0.75rem;color:#059669;">Total net</div>
+                  <div class="mono" style="font-size:1.25rem;font-weight:700;color:#059669;" id="ijss-total-net"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="module-maternite" class="module hidden">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#fce7f3;">🤰</div>
+          <h2 class="card-title">Calcul du Congé Maternité</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label">Date prévue d'accouchement (DPA)</label>
+              <input type="date" id="mat-dpa" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Type de grossesse</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active-pink" onclick="setTypeGrossesse('simple', this)">Simple</button>
+                <button class="toggle-btn" onclick="setTypeGrossesse('jumeaux', this)">Jumeaux</button>
+                <button class="toggle-btn" onclick="setTypeGrossesse('triples', this)">Triplés ou +</button>
+              </div>
+            </div>
+            
+            <div class="form-group" id="mat-enfants-group">
+              <label class="form-label">Enfants déjà à charge</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active-pink" onclick="setNbEnfantsCharge(0, this)">0</button>
+                <button class="toggle-btn" onclick="setNbEnfantsCharge(1, this)">1</button>
+                <button class="toggle-btn" onclick="setNbEnfantsCharge(2, this)">2</button>
+                <button class="toggle-btn" onclick="setNbEnfantsCharge(3, this)">3+</button>
+              </div>
+              <small style="color:#64748b;font-size:0.75rem;">À partir du 3ème enfant : congé allongé</small>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Report vers le postnatal</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active-pink" onclick="setReport(0, this)">Aucun</button>
+                <button class="toggle-btn" onclick="setReport(1, this)">1 sem.</button>
+                <button class="toggle-btn" onclick="setReport(2, this)">2 sem.</button>
+                <button class="toggle-btn" onclick="setReport(3, this)">3 sem.</button>
+              </div>
+              <small style="color:#64748b;font-size:0.75rem;">Max 3 semaines du prénatal vers postnatal</small>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Congés pathologiques</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item">
+                  <input type="checkbox" id="mat-patho-pre">
+                  <div>
+                    <div style="font-weight:500;color:#374151;font-size:0.875rem;">Pathologique prénatal</div>
+                    <div style="color:#64748b;font-size:0.75rem;">+2 semaines avant le congé maternité</div>
+                  </div>
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" id="mat-patho-post">
+                  <div>
+                    <div style="font-weight:500;color:#374151;font-size:0.875rem;">Pathologique postnatal</div>
+                    <div style="color:#64748b;font-size:0.75rem;">+4 semaines après le congé maternité</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <button class="btn btn-pink btn-block" onclick="calculerMaternite()">Calculer les dates</button>
+            
+            <div class="result-box" style="margin-top:1.5rem;">
+              <h4 style="font-size:0.875rem;font-weight:600;color:#475569;margin-bottom:0.75rem;">📋 Durées légales</h4>
+              <table class="ref-table">
+                <thead>
+                  <tr>
+                    <th>Situation</th>
+                    <th style="text-align:center;">Prénatal</th>
+                    <th style="text-align:center;">Postnatal</th>
+                    <th style="text-align:center;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1er ou 2ème enfant</td>
+                    <td class="mono" style="text-align:center;">6 sem.</td>
+                    <td class="mono" style="text-align:center;">10 sem.</td>
+                    <td class="mono" style="text-align:center;font-weight:600;">16 sem.</td>
+                  </tr>
+                  <tr>
+                    <td>3ème enfant ou +</td>
+                    <td class="mono" style="text-align:center;">8 sem.</td>
+                    <td class="mono" style="text-align:center;">18 sem.</td>
+                    <td class="mono" style="text-align:center;font-weight:600;">26 sem.</td>
+                  </tr>
+                  <tr>
+                    <td>Jumeaux</td>
+                    <td class="mono" style="text-align:center;">12 sem.</td>
+                    <td class="mono" style="text-align:center;">22 sem.</td>
+                    <td class="mono" style="text-align:center;font-weight:600;">34 sem.</td>
+                  </tr>
+                  <tr>
+                    <td>Triplés ou +</td>
+                    <td class="mono" style="text-align:center;">24 sem.</td>
+                    <td class="mono" style="text-align:center;">22 sem.</td>
+                    <td class="mono" style="text-align:center;font-weight:600;">46 sem.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div id="mat-results" class="hidden">
+            <div class="info-box info-box-pink" style="margin-bottom:1rem;">
+              <div class="info-title">🤰 <span id="mat-description"></span></div>
+              <div style="color:#64748b;font-size:0.875rem;">DPA : <span id="mat-dpa-result"></span></div>
+            </div>
+            
+            <div class="result-box" style="margin-bottom:1rem;">
+              <h4 style="font-size:0.875rem;font-weight:600;color:#475569;margin-bottom:1rem;">📅 Chronologie du congé</h4>
+              <div class="timeline" id="mat-timeline"></div>
+            </div>
+            
+            <div class="result-box">
+              <h4 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:1rem;">Résumé</h4>
+              <div class="result-row">
+                <span class="result-label">Début effectif</span>
+                <span class="result-value" id="mat-debut"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Fin effective</span>
+                <span class="result-value" id="mat-fin"></span>
+              </div>
+              <div class="result-row" id="mat-report-row" style="display:none;">
+                <span class="result-label">Report appliqué</span>
+                <span class="result-value" style="color:#db2777;" id="mat-report-info"></span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:0.75rem;text-align:center;">
+                  <div style="font-size:0.75rem;color:#64748b;">Durée totale</div>
+                  <div class="mono" style="font-size:1.5rem;font-weight:700;" id="mat-duree-sem"></div>
+                  <div style="font-size:0.75rem;color:#64748b;">semaines</div>
+                </div>
+                <div class="result-highlight result-highlight-pink" style="margin:0;padding:0.75rem;">
+                  <div style="font-size:0.75rem;color:#db2777;">Soit</div>
+                  <div class="mono result-big result-big-pink" id="mat-duree-jours"></div>
+                  <div style="font-size:0.75rem;color:#db2777;">jours</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="module-paternite" class="module hidden">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#e0f2fe;">👶</div>
+          <h2 class="card-title">Calcul du Congé Paternité</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="form-group">
+              <label class="form-label">Date de naissance de l'enfant</label>
+              <input type="date" id="pat-date-naissance" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Type de naissance</label>
+              <div style="display:flex;gap:0.75rem;">
+                <button class="toggle-btn active-sky" style="flex:1;padding:0.75rem;" onclick="setNaissanceMultiple(false, this)">Simple (25 jours)</button>
+                <button class="toggle-btn" style="flex:1;padding:0.75rem;" onclick="setNaissanceMultiple(true, this)">Multiple (32 jours)</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Fractionnement du congé</label>
+              <div class="radio-group">
+                <label class="radio-item active" onclick="setFractionnement('1periode', this)">
+                  <input type="radio" name="fractionnement" value="1periode" checked>
+                  <div>
+                    <div style="font-weight:500;color:#0369a1;font-size:0.875rem;">En une seule période</div>
+                    <div style="color:#64748b;font-size:0.75rem;" id="pat-duree-1p">21 jours consécutifs</div>
+                  </div>
+                </label>
+                <label class="radio-item" onclick="setFractionnement('2periodes', this)">
+                  <input type="radio" name="fractionnement" value="2periodes">
+                  <div>
+                    <div style="font-weight:500;color:#374151;font-size:0.875rem;">En 2 périodes</div>
+                    <div style="color:#64748b;font-size:0.75rem;">Minimum 5 jours par période</div>
+                  </div>
+                </label>
+                <label class="radio-item" onclick="setFractionnement('3periodes', this)">
+                  <input type="radio" name="fractionnement" value="3periodes">
+                  <div>
+                    <div style="font-weight:500;color:#374151;font-size:0.875rem;">En 3 périodes</div>
+                    <div style="color:#64748b;font-size:0.75rem;">Maximum autorisé</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <div class="form-group hidden" id="pat-repartition">
+              <label class="form-label">Répartition des jours</label>
+              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                <span style="width:80px;font-size:0.875rem;color:#64748b;">Période 1 :</span>
+                <input type="number" id="pat-duree-p1" class="form-input mono" style="width:80px;text-align:center;" value="11" min="5">
+                <span style="font-size:0.875rem;color:#64748b;">jours</span>
+              </div>
+              <div id="pat-p2-row" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                <span style="width:80px;font-size:0.875rem;color:#64748b;">Période 2 :</span>
+                <span class="mono" style="font-weight:500;" id="pat-duree-p2-auto">10 jours</span>
+                <span style="font-size:0.75rem;color:#94a3b8;">(automatique)</span>
+              </div>
+              <div id="pat-p3-row" class="hidden" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                <span style="width:80px;font-size:0.875rem;color:#64748b;">Période 2 :</span>
+                <input type="number" id="pat-duree-p2" class="form-input mono" style="width:80px;text-align:center;" value="7" min="5">
+                <span style="font-size:0.875rem;color:#64748b;">jours</span>
+              </div>
+              <div id="pat-p3-auto" class="hidden" style="display:flex;align-items:center;gap:0.5rem;">
+                <span style="width:80px;font-size:0.875rem;color:#64748b;">Période 3 :</span>
+                <span class="mono" style="font-weight:500;" id="pat-duree-p3-auto">7 jours</span>
+              </div>
+              <div class="alert alert-amber" style="margin-top:0.5rem;">
+                ⚠️ Chaque période doit comporter au minimum 5 jours
+              </div>
+            </div>
+            
+            <button class="btn btn-sky btn-block" onclick="calculerPaternite()">Calculer les dates</button>
+            
+            <div class="info-box" style="margin-top:1.5rem;">
+              <h4 class="info-title" style="color:#0369a1;">📋 Règles du congé paternité (depuis juillet 2021)</h4>
+              <ul class="info-list">
+                <li><strong>3 jours</strong> de congé naissance (jours ouvrables)</li>
+                <li><strong>4 jours</strong> obligatoires consécutifs après la naissance</li>
+                <li><strong id="pat-info-jours">21 jours</strong> fractionnables (calendaires)</li>
+                <li>À prendre dans les <strong>6 mois</strong> suivant la naissance</li>
+                <li>Maximum <strong>3 périodes</strong> de 5 jours minimum</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div id="pat-results" class="hidden">
+            <div class="info-box" style="margin-bottom:1rem;background:#f0f9ff;border-color:#bae6fd;">
+              <div class="info-title" style="color:#0369a1;">👶 Naissance <span id="pat-type-naissance"></span></div>
+              <div style="color:#64748b;font-size:0.875rem;">Date : <span id="pat-date-result"></span></div>
+            </div>
+            
+            <div class="result-box" style="margin-bottom:1rem;">
+              <h4 style="font-size:0.875rem;font-weight:600;color:#475569;margin-bottom:1rem;">📅 Chronologie du congé</h4>
+              <div class="timeline" id="pat-timeline"></div>
+            </div>
+            
+            <div class="result-box">
+              <h4 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:1rem;">Résumé</h4>
+              <div class="result-row">
+                <span class="result-label">Congé naissance</span>
+                <span class="result-value mono">3 jours ouvrables</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Congé paternité</span>
+                <span class="result-value mono" id="pat-total-paternite"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Fractionnement</span>
+                <span class="result-value" id="pat-nb-periodes"></span>
+              </div>
+              <div class="result-highlight result-highlight-sky" style="margin-top:1rem;">
+                <div style="font-size:0.75rem;color:#0284c7;">Total congé paternité + naissance</div>
+                <div class="mono result-big result-big-sky" id="pat-total-jours"></div>
+                <div style="font-size:0.75rem;color:#0284c7;">jours</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="module-heures" class="module hidden">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#ede9fe;">⏱️</div>
+          <h2 class="card-title">Calcul des heures pour absence</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">Mois</label>
+                <select id="heures-mois" class="form-select"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Année</label>
+                <select id="heures-annee" class="form-select"></select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Heures mensualisées</label>
+              <input type="number" id="heures-contrat" class="form-input mono" value="151.67" step="0.01">
+              <small style="color:#64748b;font-size:0.75rem;">35h = 151,67h | 39h = 169h</small>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Jours d'absence</label>
+              <input type="number" id="heures-absence" class="form-input mono" placeholder="Ex: 3" step="0.5">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Méthode de calcul</label>
+              <select id="heures-methode" class="form-select">
+                <option value="ouvres">Jours ouvrés réels</option>
+                <option value="ouvrables">Jours ouvrables réels</option>
+                <option value="heures">Heures réelles (7h/j)</option>
+                <option value="trentieme">Méthode 1/30ème</option>
+              </select>
+            </div>
+            
+            <button class="btn btn-violet btn-block" onclick="calculerHeures()">Calculer</button>
+          </div>
+          
+          <div id="heures-results" class="hidden">
+            <div class="result-box">
+              <h4 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:1rem;">Résultat</h4>
+              <div class="result-row">
+                <span class="result-label">Méthode</span>
+                <span class="result-value" id="heures-methode-result"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Heures contrat</span>
+                <span class="result-value mono" id="heures-contrat-result"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Base de calcul</span>
+                <span class="result-value" id="heures-base-result"></span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Heures à déduire</span>
+                <span class="result-value mono" style="color:#ef4444;" id="heures-deduire-result"></span>
+              </div>
+              <div class="result-highlight" style="margin-top:1rem;background:#f5f3ff;border-color:#c4b5fd;">
+                <div style="font-size:0.75rem;color:#7c3aed;">Heures à payer</div>
+                <div class="mono" style="font-size:2rem;font-weight:700;color:#7c3aed;" id="heures-payer-result"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="module-jours" class="module hidden">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:#fef3c7;">📅</div>
+          <h2 class="card-title">Jours ouvrés & ouvrables</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div class="form-group">
+                <label class="form-label">Mois</label>
+                <select id="jours-mois" class="form-select" onchange="updateJoursInfo()"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Année</label>
+                <select id="jours-annee" class="form-select" onchange="updateJoursInfo()"></select>
+              </div>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-value mono" id="jours-calendaires">31</div>
+                <div class="stat-label">Calendaires</div>
+              </div>
+              <div class="stat-box" style="background:#f5f3ff;border:1px solid #c4b5fd;">
+                <div class="stat-value mono" style="color:#7c3aed;" id="jours-ouvres">23</div>
+                <div class="stat-label" style="color:#7c3aed;">Ouvrés (L-V)</div>
+              </div>
+              <div class="stat-box" style="background:#fef3c7;border:1px solid #fcd34d;">
+                <div class="stat-value mono" style="color:#d97706;" id="jours-ouvrables">27</div>
+                <div class="stat-label" style="color:#d97706;">Ouvrables (L-S)</div>
+              </div>
+            </div>
+            
+            <div class="result-box">
+              <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleFeries()">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span>🎌</span>
+                  <span style="font-weight:500;">Jours fériés du mois</span>
+                  <span class="badge badge-red" id="jours-feries-count">0</span>
+                </div>
+                <span id="feries-arrow">▼</span>
+              </div>
+              <div id="feries-mois-list" class="hidden" style="margin-top:1rem;"></div>
+            </div>
+          </div>
+          
+          <div>
+            <div class="result-box">
+              <h4 style="font-size:0.875rem;font-weight:600;color:#475569;margin-bottom:1rem;">Jours fériés <span id="jours-annee-title"></span></h4>
+              <div class="feries-list" id="feries-annee-list"></div>
+              <p style="text-align:center;color:#94a3b8;font-size:0.75rem;margin-top:1rem;">
+                📅 Calendrier perpétuel • Calcul automatique de Pâques
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Calculs indicatifs • <span id="footer-pmss"></span> • <span id="footer-smic"></span></p>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // CONSTANTES ET DONNÉES
+    // ============================================
+    
+    const MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const MOIS_COURT = ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'];
+    
+    const PLAFOND_SS = { 2020: 3428, 2021: 3428, 2022: 3428, 2023: 3666, 2024: 3864, 2025: 3925, 2026: 4005 };
+    const SMIC_MENSUEL = { 2020: 1539.42, 2021: 1554.58, 2022: 1645.58, 2023: 1709.28, 2024: 1766.92, 2025: 1801.80, 2026: 1823.03 };
+    const SMIC_HORAIRE = { 2020: 10.15, 2021: 10.25, 2022: 10.85, 2023: 11.27, 2024: 11.65, 2025: 11.88, 2026: 12.02 };
+    
+    const COEF_PLAFOND_ANCIEN = 1.8;
+    const COEF_PLAFOND_NOUVEAU = 1.4;
+    
+    // State
+    let calcDisplay = '0';
+    let calcPrevious = null;
+    let calcOperator = null;
+    let calcNewNumber = true;
+    
+    let ijssMode = 'maladie';
+    let ijssEnfants = 0;
+    let moisRef = [];
+    
+    let typeGrossesse = 'simple';
+    let nbEnfantsCharge = 0;
+    let reportSemaines = 0;
+    
+    let naissanceMultiple = false;
+    let fractionnement = '1periode';
+    
+    // ============================================
+    // UTILITAIRES
+    // ============================================
+    
+    function getPMSS(annee) {
+      if (PLAFOND_SS[annee]) return PLAFOND_SS[annee];
+      return Math.round(PLAFOND_SS[2026] * Math.pow(1.02, annee - 2026));
+    }
+    
+    function getSMIC(annee) {
+      if (SMIC_MENSUEL[annee]) return SMIC_MENSUEL[annee];
+      return Math.round(SMIC_MENSUEL[2026] * Math.pow(1.015, annee - 2026) * 100) / 100;
+    }
+    
+    function formatDate(date) {
+      return date.toLocaleDateString('fr-FR');
+    }
+    
+    function addDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+    
+    function addWeeks(date, weeks) {
+      return addDays(date, weeks * 7);
+    }
+    
+    function subWeeks(date, weeks) {
+      return addDays(date, -weeks * 7);
+    }
+    
+    // Calcul de Pâques (algorithme de Meeus/Jones/Butcher)
+    function calculerPaques(annee) {
+      const a = annee % 19;
+      const b = Math.floor(annee / 100);
+      const c = annee % 100;
+      const d = Math.floor(b / 4);
+      const e = b % 4;
+      const f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4);
+      const k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const mois = Math.floor((h + l - 7 * m + 114) / 31) - 1;
+      const jour = ((h + l - 7 * m + 114) % 31) + 1;
+      return new Date(annee, mois, jour);
+    }
+    
+    function getJoursFeries(annee) {
+      const paques = calculerPaques(annee);
+      const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      
+      const feries = [
+        { date: new Date(annee, 0, 1), nom: "Jour de l'An" },
+        { date: addDays(paques, 1), nom: "Lundi de Pâques" },
+        { date: new Date(annee, 4, 1), nom: "Fête du Travail" },
+        { date: new Date(annee, 4, 8), nom: "Victoire 1945" },
+        { date: addDays(paques, 39), nom: "Ascension" },
+        { date: addDays(paques, 50), nom: "Lundi de Pentecôte" },
+        { date: new Date(annee, 6, 14), nom: "Fête Nationale" },
+        { date: new Date(annee, 7, 15), nom: "Assomption" },
+        { date: new Date(annee, 10, 1), nom: "Toussaint" },
+        { date: new Date(annee, 10, 11), nom: "Armistice" },
+        { date: new Date(annee, 11, 25), nom: "Noël" },
+      ];
+      
+      return feries.map(f => ({
+        ...f,
+        jour: jours[f.date.getDay()],
+        dateStr: `${annee}-${String(f.date.getMonth() + 1).padStart(2, '0')}-${String(f.date.getDate()).padStart(2, '0')}`
+      })).sort((a, b) => a.date - b.date);
+    }
+    
+    function getJoursInfo(mois, annee) {
+      const dernierJour = new Date(annee, mois + 1, 0);
+      const nbJoursMois = dernierJour.getDate();
+      const joursFeries = getJoursFeries(annee);
+      
+      let joursOuvres = 0;
+      let joursOuvrables = 0;
+      const feriesDuMois = [];
+      
+      for (let jour = 1; jour <= nbJoursMois; jour++) {
+        const date = new Date(annee, mois, jour);
+        const jourSemaine = date.getDay();
+        const dateStr = `${annee}-${String(mois + 1).padStart(2, '0')}-${String(jour).padStart(2, '0')}`;
+        
+        const estFerie = joursFeries.find(f => f.dateStr === dateStr);
+        if (estFerie) feriesDuMois.push(estFerie);
+        
+        if (jourSemaine >= 1 && jourSemaine <= 6 && !estFerie) joursOuvrables++;
+        if (jourSemaine >= 1 && jourSemaine <= 5 && !estFerie) joursOuvres++;
+      }
+      
+      return { joursOuvres, joursOuvrables, feriesDuMois, nbJoursMois };
+    }
+    
+    // ============================================
+    // NAVIGATION
+    // ============================================
+    
+    const moduleColors = {
+      calculatrice: '#3b82f6',
+      ijss: '#10b981',
+      maternite: '#ec4899',
+      paternite: '#0ea5e9',
+      heures: '#8b5cf6',
+      jours: '#f59e0b'
+    };
+    
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const module = this.dataset.module;
+        
+        // Update nav buttons
+        document.querySelectorAll('.nav-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.background = '';
+          b.style.color = '';
+        });
+        this.classList.add('active');
+        this.style.background = moduleColors[module];
+        this.style.color = 'white';
+        
+        // Show module
+        document.querySelectorAll('.module').forEach(m => m.classList.add('hidden'));
+        document.getElementById('module-' + module).classList.remove('hidden');
+      });
+    });
+    
+    // ============================================
+    // CALCULATRICE
+    // ============================================
+    
+    function updateCalcDisplay() {
+      document.getElementById('calc-current').textContent = calcDisplay;
+      document.getElementById('calc-previous').textContent = calcPrevious !== null ? `${calcPrevious} ${calcOperator}` : '';
+    }
+    
+    function calcNumber(num) {
+      if (calcNewNumber) {
+        calcDisplay = num;
+        calcNewNumber = false;
+      } else {
+        calcDisplay = calcDisplay === '0' ? num : calcDisplay + num;
+      }
+      updateCalcDisplay();
+    }
+    
+    function calcDecimal() {
+      if (calcNewNumber) {
+        calcDisplay = '0.';
+        calcNewNumber = false;
+      } else if (!calcDisplay.includes('.')) {
+        calcDisplay += '.';
+      }
+      updateCalcDisplay();
+    }
+    
+    function calcOperator(op) {
+      const current = parseFloat(calcDisplay);
+      if (calcPrevious !== null && !calcNewNumber) {
+        const result = calculate(calcPrevious, current, calcOperator);
+        calcDisplay = String(result);
+        calcPrevious = result;
+      } else {
+        calcPrevious = current;
+      }
+      calcOperator = op;
+      calcNewNumber = true;
+      updateCalcDisplay();
+    }
+    
+    function calculate(a, b, op) {
+      switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '×': return a * b;
+        case '÷': return b !== 0 ? a / b : 'Erreur';
+        default: return b;
+      }
+    }
+    
+    function calcEquals() {
+      if (calcPrevious !== null && calcOperator) {
+        const current = parseFloat(calcDisplay);
+        const result = calculate(calcPrevious, current, calcOperator);
+        calcDisplay = String(Math.round(result * 100) / 100);
+        calcPrevious = null;
+        calcOperator = null;
+        calcNewNumber = true;
+        updateCalcDisplay();
+      }
+    }
+    
+    function calcClear() {
+      calcDisplay = '0';
+      calcPrevious = null;
+      calcOperator = null;
+      calcNewNumber = true;
+      updateCalcDisplay();
+    }
+    
+    function calcPercent() {
+      calcDisplay = String(parseFloat(calcDisplay) / 100);
+      calcNewNumber = true;
+      updateCalcDisplay();
+    }
+    
+    function calcPlusMinus() {
+      calcDisplay = String(parseFloat(calcDisplay) * -1);
+      updateCalcDisplay();
+    }
+    
+    // ============================================
+    // IJSS
+    // ============================================
+    
+    function initIjssMois() {
+      const container = document.getElementById('ijss-mois-container');
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      
+      moisRef = [
+        { mois: (now.getMonth() - 3 + 12) % 12, annee: now.getMonth() < 3 ? currentYear - 1 : currentYear, salaire: '' },
+        { mois: (now.getMonth() - 2 + 12) % 12, annee: now.getMonth() < 2 ? currentYear - 1 : currentYear, salaire: '' },
+        { mois: (now.getMonth() - 1 + 12) % 12, annee: now.getMonth() < 1 ? currentYear - 1 : currentYear, salaire: '' },
+      ];
+      
+      let html = '';
+      for (let i = 0; i < 3; i++) {
+        html += `
+          <div class="month-row">
+            <div class="month-number">${i + 1}</div>
+            <select class="month-select" id="ijss-mois-${i}" onchange="updateMoisRef(${i}, 'mois', this.value)">
+              ${MOIS.map((m, idx) => `<option value="${idx}" ${moisRef[i].mois === idx ? 'selected' : ''}>${m}</option>`).join('')}
+            </select>
+            <select class="month-select" id="ijss-annee-${i}" style="width:80px;" onchange="updateMoisRef(${i}, 'annee', this.value)">
+              ${[2023, 2024, 2025, 2026].map(a => `<option value="${a}" ${moisRef[i].annee === a ? 'selected' : ''}>${a}</option>`).join('')}
+            </select>
+            <input type="number" class="month-input mono" id="ijss-salaire-${i}" placeholder="Salaire" onchange="updateMoisRef(${i}, 'salaire', this.value)">
+            <span style="color:#64748b;font-size:0.75rem;">€</span>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+    
+    function updateMoisRef(index, field, value) {
+      if (field === 'mois' || field === 'annee') {
+        moisRef[index][field] = parseInt(value);
+      } else {
+        moisRef[index][field] = value;
+      }
+    }
+    
+    function setIjssMode(mode, btn) {
+      ijssMode = mode;
+      document.querySelectorAll('#module-ijss .toggle-group')[0].querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      document.getElementById('ijss-enfants-group').classList.toggle('hidden', mode !== 'maladie');
+      document.getElementById('ijss-carence-info').textContent = mode === 'maladie' ? '3 jours' : mode === 'at' ? '1 jour' : 'aucune';
+      checkIjssRegime();
+    }
+    
+    function setEnfants(n, btn) {
+      ijssEnfants = n;
+      document.getElementById('ijss-enfants-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    
+    function checkIjssRegime() {
+      const dateArret = new Date(document.getElementById('ijss-date-arret').value);
+      const dateReforme = new Date('2025-04-01');
+      const apresReforme = dateArret >= dateReforme;
+      
+      const alert = document.getElementById('ijss-regime-alert');
+      if (ijssMode === 'maladie') {
+        alert.classList.remove('hidden');
+        if (apresReforme) {
+          alert.className = 'alert alert-amber';
+          alert.innerHTML = '⚠️ Nouveau régime (depuis 01/04/2025) : plafond 1,4 × SMIC';
+        } else {
+          alert.className = 'alert alert-green';
+          alert.innerHTML = '✓ Ancien régime (avant 01/04/2025) : plafond 1,8 × SMIC';
+        }
+      } else {
+        alert.classList.add('hidden');
+      }
+    }
+    
+    function calculerIJSS() {
+      const jours = parseInt(document.getElementById('ijss-jours').value) || 0;
+      const dateArret = new Date(document.getElementById('ijss-date-arret').value);
+      const anneeArret = dateArret.getFullYear();
+      const apresReforme = dateArret >= new Date('2025-04-01');
+      
+      // Update salaires from inputs
+      for (let i = 0; i < 3; i++) {
+        moisRef[i].salaire = document.getElementById(`ijss-salaire-${i}`).value;
+      }
+      
+      let totalPlafonne = 0;
+      let detailHtml = '';
+      
+      for (const ref of moisRef) {
+        const salaire = parseFloat(ref.salaire) || 0;
+        let plafond;
+        
+        if (ijssMode === 'maladie') {
+          const smic = getSMIC(ref.annee);
+          plafond = Math.round(smic * (apresReforme ? COEF_PLAFOND_NOUVEAU : COEF_PLAFOND_ANCIEN) * 100) / 100;
+        } else {
+          plafond = getPMSS(ref.annee);
+        }
+        
+        const salairePlafonne = Math.min(salaire, plafond);
+        totalPlafonne += salairePlafonne;
+        
+        const estPlafonne = salaire > plafond;
+        detailHtml += `
+          <div class="result-row">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <span>${MOIS_COURT[ref.mois]} ${ref.annee}</span>
+              ${estPlafonne ? '<span class="badge badge-amber">Plafonné</span>' : ''}
+            </div>
+            <span class="mono" style="font-weight:500;">${salairePlafonne.toFixed(2)} €</span>
+          </div>
+        `;
+      }
+      
+      const sjr = totalPlafonne / 91.25;
+      let taux, joursCarence, ijssJour, plafondIJSS;
+      
+      if (ijssMode === 'maladie') {
+        taux = ijssEnfants >= 3 ? 0.6667 : 0.50;
+        joursCarence = 3;
+        const smic = getSMIC(anneeArret);
+        const plafMensuel = smic * (apresReforme ? COEF_PLAFOND_NOUVEAU : COEF_PLAFOND_ANCIEN);
+        plafondIJSS = (plafMensuel * 3 / 91.25) * taux;
+        ijssJour = Math.min(sjr * taux, plafondIJSS);
+      } else if (ijssMode === 'maternite') {
+        taux = 0.7896;
+        joursCarence = 0;
+        ijssJour = sjr * taux;
+        plafondIJSS = getPMSS(anneeArret) / 30.42 * 0.7896;
+        ijssJour = Math.min(ijssJour, plafondIJSS);
+      } else {
+        joursCarence = 1;
+        taux = jours <= 28 ? 0.60 : 0.80;
+        ijssJour = sjr * taux;
+        plafondIJSS = getPMSS(anneeArret) / 30.42 * 1.8 * taux;
+        ijssJour = Math.min(ijssJour, plafondIJSS);
+      }
+      
+      const joursIndemnises = Math.max(0, jours - joursCarence);
+      const totalBrut = ijssJour * joursIndemnises;
+      const ijssNet = ijssJour * 0.933;
+      const totalNet = totalBrut * 0.933;
+      
+      // Update display
+      document.getElementById('ijss-detail-mois').innerHTML = detailHtml;
+      document.getElementById('ijss-total-plafonne').textContent = totalPlafonne.toFixed(2) + ' €';
+      document.getElementById('ijss-sjr').textContent = sjr.toFixed(2) + ' €';
+      document.getElementById('ijss-taux').textContent = ijssMode === 'maladie' ? (ijssEnfants >= 3 ? '66,67%' : '50%') : ijssMode === 'maternite' ? '78,96%' : (jours <= 28 ? '60%' : '80%');
+      document.getElementById('ijss-jour-brut').textContent = ijssJour.toFixed(2) + ' €';
+      document.getElementById('ijss-jour-net').textContent = ijssNet.toFixed(2) + ' €';
+      document.getElementById('ijss-jours-info').textContent = `${joursCarence}j / ${joursIndemnises}j`;
+      document.getElementById('ijss-total-brut').textContent = totalBrut.toFixed(2) + ' €';
+      document.getElementById('ijss-total-net').textContent = totalNet.toFixed(2) + ' €';
+      document.getElementById('ijss-date-result').textContent = formatDate(dateArret);
+      
+      const regimeBox = document.getElementById('ijss-regime-box');
+      if (ijssMode === 'maladie') {
+        regimeBox.classList.remove('hidden');
+        regimeBox.innerHTML = `
+          <div class="info-title">${apresReforme ? '⚠️' : '✓'} Régime ${apresReforme ? 'Nouveau (1,4 × SMIC)' : 'Ancien (1,8 × SMIC)'}</div>
+          <div style="color:#64748b;font-size:0.875rem;">Arrêt du ${formatDate(dateArret)}</div>
+        `;
+        regimeBox.className = apresReforme ? 'info-box info-box-amber' : 'info-box';
+        regimeBox.style.background = apresReforme ? '#fffbeb' : '#ecfdf5';
+        regimeBox.style.borderColor = apresReforme ? '#fde68a' : '#a7f3d0';
+      } else {
+        regimeBox.classList.add('hidden');
+      }
+      
+      document.getElementById('ijss-results').classList.remove('hidden');
+    }
+    
+    // ============================================
+    // MATERNITÉ
+    // ============================================
+    
+    function setTypeGrossesse(type, btn) {
+      typeGrossesse = type;
+      document.querySelectorAll('#module-maternite .toggle-group')[0].querySelectorAll('.toggle-btn').forEach(b => {
+        b.classList.remove('active-pink');
+      });
+      btn.classList.add('active-pink');
+      document.getElementById('mat-enfants-group').classList.toggle('hidden', type !== 'simple');
+    }
+    
+    function setNbEnfantsCharge(n, btn) {
+      nbEnfantsCharge = n;
+      document.getElementById('mat-enfants-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-pink'));
+      btn.classList.add('active-pink');
+    }
+    
+    function setReport(n, btn) {
+      reportSemaines = n;
+      document.querySelectorAll('#module-maternite .toggle-group')[2].querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active-pink'));
+      btn.classList.add('active-pink');
+    }
+    
+    function calculerMaternite() {
+      const dpaValue = document.getElementById('mat-dpa').value;
+      if (!dpaValue) return alert('Veuillez saisir la date prévue d\'accouchement');
+      
+      const dpa = new Date(dpaValue);
+      let dureePrenatale, dureePostnatale, description;
+      
+      if (typeGrossesse === 'triples') {
+        dureePrenatale = 24; dureePostnatale = 22;
+        description = 'Grossesse multiple (3+ enfants)';
+      } else if (typeGrossesse === 'jumeaux') {
+        dureePrenatale = 12; dureePostnatale = 22;
+        description = 'Grossesse gémellaire';
+      } else if (nbEnfantsCharge >= 2) {
+        dureePrenatale = 8; dureePostnatale = 18;
+        description = '3ème enfant ou plus';
+      } else {
+        dureePrenatale = 6; dureePostnatale = 10;
+        description = '1er ou 2ème enfant';
+      }
+      
+      const reportEffectif = Math.min(reportSemaines, 3);
+      const prenataleAjustee = dureePrenatale - reportEffectif;
+      const postnataleAjustee = dureePostnatale + reportEffectif;
+      
+      const pathoPrenatale = document.getElementById('mat-patho-pre').checked ? 2 : 0;
+      const pathoPostnatale = document.getElementById('mat-patho-post').checked ? 4 : 0;
+      
+      const debutMaternite = subWeeks(dpa, prenataleAjustee);
+      const debutPatho = pathoPrenatale ? subWeeks(debutMaternite, pathoPrenatale) : null;
+      const finMaternite = addWeeks(dpa, postnataleAjustee);
+      const finPatho = pathoPostnatale ? addWeeks(finMaternite, pathoPostnatale) : null;
+      
+      const dureeTotale = prenataleAjustee + postnataleAjustee + pathoPrenatale + pathoPostnatale;
+      
+      // Timeline
+      let timelineHtml = '';
+      
+      if (pathoPrenatale) {
+        timelineHtml += `
+          <div class="timeline-item" style="background:#fff7ed;border-color:#fed7aa;">
+            <div class="timeline-dot" style="background:#f97316;"></div>
+            <div class="timeline-content">
+              <div class="timeline-title" style="color:#c2410c;">Congé pathologique prénatal</div>
+              <div class="timeline-desc">${formatDate(debutPatho)} → Début maternité</div>
+            </div>
+            <div class="timeline-value" style="color:#c2410c;">${pathoPrenatale} sem.</div>
+          </div>
+        `;
+      }
+      
+      timelineHtml += `
+        <div class="timeline-item" style="background:#fdf2f8;border-color:#fbcfe8;">
+          <div class="timeline-dot" style="background:#ec4899;"></div>
+          <div class="timeline-content">
+            <div class="timeline-title" style="color:#be185d;">Congé prénatal</div>
+            <div class="timeline-desc">${formatDate(debutMaternite)} → ${formatDate(dpa)}</div>
+          </div>
+          <div class="timeline-value" style="color:#be185d;">${prenataleAjustee} sem.</div>
+        </div>
+        <div class="timeline-item" style="background:#f1f5f9;border-color:#cbd5e1;">
+          <div class="timeline-dot" style="background:#64748b;"></div>
+          <div class="timeline-content">
+            <div class="timeline-title" style="color:#475569;">Date prévue d'accouchement</div>
+          </div>
+          <div class="timeline-value">${formatDate(dpa)}</div>
+        </div>
+        <div class="timeline-item" style="background:#faf5ff;border-color:#e9d5ff;">
+          <div class="timeline-dot" style="background:#a855f7;"></div>
+          <div class="timeline-content">
+            <div class="timeline-title" style="color:#7e22ce;">Congé postnatal</div>
+            <div class="timeline-desc">${formatDate(dpa)} → ${formatDate(finMaternite)}</div>
+          </div>
+          <div class="timeline-value" style="color:#7e22ce;">${postnataleAjustee} sem.</div>
+        </div>
+      `;
+      
+      if (pathoPostnatale) {
+        timelineHtml += `
+          <div class="timeline-item" style="background:#fff7ed;border-color:#fed7aa;">
+            <div class="timeline-dot" style="background:#f97316;"></div>
+            <div class="timeline-content">
+              <div class="timeline-title" style="color:#c2410c;">Congé pathologique postnatal</div>
+              <div class="timeline-desc">${formatDate(finMaternite)} → ${formatDate(finPatho)}</div>
+            </div>
+            <div class="timeline-value" style="color:#c2410c;">${pathoPostnatale} sem.</div>
+          </div>
+        `;
+      }
+      
+      document.getElementById('mat-timeline').innerHTML = timelineHtml;
+      document.getElementById('mat-description').textContent = description;
+      document.getElementById('mat-dpa-result').textContent = formatDate(dpa);
+      document.getElementById('mat-debut').textContent = formatDate(debutPatho || debutMaternite);
+      document.getElementById('mat-fin').textContent = formatDate(finPatho || finMaternite);
+      document.getElementById('mat-duree-sem').textContent = dureeTotale;
+      document.getElementById('mat-duree-jours').textContent = dureeTotale * 7;
+      
+      if (reportEffectif > 0) {
+        document.getElementById('mat-report-row').style.display = 'flex';
+        document.getElementById('mat-report-info').textContent = `${reportEffectif} semaine(s)`;
+      } else {
+        document.getElementById('mat-report-row').style.display = 'none';
+      }
+      
+      document.getElementById('mat-results').classList.remove('hidden');
+    }
+    
+    // ============================================
+    // PATERNITÉ
+    // ============================================
+    
+    function setNaissanceMultiple(multiple, btn) {
+      naissanceMultiple = multiple;
+      const btns = btn.parentElement.querySelectorAll('.toggle-btn');
+      btns.forEach(b => b.classList.remove('active-sky'));
+      btn.classList.add('active-sky');
+      
+      const joursRestants = multiple ? 28 : 21;
+      document.getElementById('pat-duree-1p').textContent = joursRestants + ' jours consécutifs';
+      document.getElementById('pat-info-jours').textContent = joursRestants + ' jours';
+      updatePatDurees();
+    }
+    
+    function setFractionnement(frac, el) {
+      fractionnement = frac;
+      document.querySelectorAll('.radio-item').forEach(r => r.classList.remove('active'));
+      el.classList.add('active');
+      
+      const repartition = document.getElementById('pat-repartition');
+      const p2Row = document.getElementById('pat-p2-row');
+      const p3Row = document.getElementById('pat-p3-row');
+      const p3Auto = document.getElementById('pat-p3-auto');
+      
+      if (frac === '1periode') {
+        repartition.classList.add('hidden');
+      } else {
+        repartition.classList.remove('hidden');
+        if (frac === '2periodes') {
+          p2Row.style.display = 'flex';
+          p3Row.classList.add('hidden');
+          p3Auto.classList.add('hidden');
+        } else {
+          p2Row.style.display = 'none';
+          p3Row.classList.remove('hidden');
+          p3Auto.classList.remove('hidden');
+        }
+      }
+      updatePatDurees();
+    }
+    
+    function updatePatDurees() {
+      const total = naissanceMultiple ? 28 : 21;
+      const p1 = parseInt(document.getElementById('pat-duree-p1').value) || 11;
+      
+      if (fractionnement === '2periodes') {
+        document.getElementById('pat-duree-p2-auto').textContent = (total - p1) + ' jours';
+      } else if (fractionnement === '3periodes') {
+        const p2 = parseInt(document.getElementById('pat-duree-p2').value) || 7;
+        document.getElementById('pat-duree-p3-auto').textContent = Math.max(0, total - p1 - p2) + ' jours';
+      }
+    }
+    
+    document.getElementById('pat-duree-p1').addEventListener('input', updatePatDurees);
+    document.getElementById('pat-duree-p2').addEventListener('input', updatePatDurees);
+    
+    function calculerPaternite() {
+      const dateNaissanceValue = document.getElementById('pat-date-naissance').value;
+      if (!dateNaissanceValue) return alert('Veuillez saisir la date de naissance');
+      
+      const dateNaissance = new Date(dateNaissanceValue);
+      const congeNaissance = 3;
+      const congePaterniteTotal = naissanceMultiple ? 32 : 25;
+      const congePaterniteRestant = naissanceMultiple ? 28 : 21;
+      
+      // Calcul jours ouvrables
+      let finCongeNaissance = new Date(dateNaissance);
+      let count = 0;
+      while (count < congeNaissance) {
+        finCongeNaissance.setDate(finCongeNaissance.getDate() + 1);
+        if (finCongeNaissance.getDay() >= 1 && finCongeNaissance.getDay() <= 6) count++;
+      }
+      
+      const debutObligatoire = addDays(finCongeNaissance, 1);
+      const finObligatoire = addDays(debutObligatoire, 3);
+      const dateLimite = addDays(dateNaissance, 180);
+      
+      // Périodes
+      let periodes = [];
+      const p1Val = parseInt(document.getElementById('pat-duree-p1').value) || 11;
+      
+      if (fractionnement === '1periode') {
+        const debut = addDays(finObligatoire, 1);
+        periodes.push({
+          type: 'Période unique',
+          debut: formatDate(debut),
+          fin: formatDate(addDays(debut, congePaterniteRestant - 1)),
+          duree: congePaterniteRestant
+        });
+      } else if (fractionnement === '2periodes') {
+        const d1 = Math.max(5, p1Val);
+        const d2 = congePaterniteRestant - d1;
+        const debut1 = addDays(finObligatoire, 1);
+        const debut2 = addDays(addDays(debut1, d1), 13);
+        periodes = [
+          { type: '1ère période', debut: formatDate(debut1), fin: formatDate(addDays(debut1, d1 - 1)), duree: d1 },
+          { type: '2ème période', debut: formatDate(debut2), fin: formatDate(addDays(debut2, d2 - 1)), duree: d2 }
+        ];
+      } else {
+        const p2Val = parseInt(document.getElementById('pat-duree-p2').value) || 7;
+        const d1 = Math.max(5, p1Val);
+        const d2 = Math.max(5, p2Val);
+        const d3 = Math.max(0, congePaterniteRestant - d1 - d2);
+        const debut1 = addDays(finObligatoire, 1);
+        const debut2 = addDays(addDays(debut1, d1), 13);
+        const debut3 = addDays(addDays(debut2, d2), 13);
+        periodes = [
+          { type: '1ère période', debut: formatDate(debut1), fin: formatDate(addDays(debut1, d1 - 1)), duree: d1 },
+          { type: '2ème période', debut: formatDate(debut2), fin: formatDate(addDays(debut2, d2 - 1)), duree: d2 },
+          { type: '3ème période', debut: formatDate(debut3), fin: formatDate(addDays(debut3, d3 - 1)), duree: d3 }
+        ];
+      }
+      
+      // Timeline
+      let timelineHtml = `
+        <div class="timeline-item" style="background:#ecfdf5;border-color:#a7f3d0;">
+          <div class="timeline-dot" style="background:#10b981;"></div>
+          <div class="timeline-content">
+            <div class="timeline-title" style="color:#059669;">Congé naissance</div>
+            <div class="timeline-desc">${formatDate(dateNaissance)} → ${formatDate(finCongeNaissance)}</div>
+          </div>
+          <div class="timeline-value" style="color:#059669;">${congeNaissance} j. ouv.</div>
+        </div>
+        <div class="timeline-item" style="background:#fef2f2;border-color:#fecaca;">
+          <div class="timeline-dot" style="background:#ef4444;"></div>
+          <div class="timeline-content">
+            <div class="timeline-title" style="color:#dc2626;">4 jours obligatoires</div>
+            <div class="timeline-desc">${formatDate(debutObligatoire)} → ${formatDate(finObligatoire)}</div>
+          </div>
+          <div class="timeline-value" style="color:#dc2626;">4 j.</div>
+        </div>
+      `;
+      
+      for (const p of periodes) {
+        timelineHtml += `
+          <div class="timeline-item" style="background:#f0f9ff;border-color:#bae6fd;">
+            <div class="timeline-dot" style="background:#0ea5e9;"></div>
+            <div class="timeline-content">
+              <div class="timeline-title" style="color:#0369a1;">${p.type}</div>
+              <div class="timeline-desc">${p.debut} → ${p.fin}</div>
+            </div>
+            <div class="timeline-value" style="color:#0369a1;">${p.duree} j.</div>
+          </div>
+        `;
+      }
+      
+      timelineHtml += `
+        <div class="timeline-item" style="background:#fffbeb;border-color:#fde68a;">
+          <div class="timeline-dot" style="background:#f59e0b;"></div>
+          <div class="timeline-content">
+            <div class="timeline-title" style="color:#d97706;">Date limite</div>
+            <div class="timeline-desc">6 mois après la naissance</div>
+          </div>
+          <div class="timeline-value" style="color:#d97706;">${formatDate(dateLimite)}</div>
+        </div>
+      `;
+      
+      document.getElementById('pat-timeline').innerHTML = timelineHtml;
+      document.getElementById('pat-type-naissance').textContent = naissanceMultiple ? 'multiple' : 'simple';
+      document.getElementById('pat-date-result').textContent = formatDate(dateNaissance);
+      document.getElementById('pat-total-paternite').textContent = congePaterniteTotal + ' jours calendaires';
+      document.getElementById('pat-nb-periodes').textContent = periodes.length + ' période(s)';
+      document.getElementById('pat-total-jours').textContent = congeNaissance + congePaterniteTotal;
+      
+      document.getElementById('pat-results').classList.remove('hidden');
+    }
+    
+    // ============================================
+    // HEURES
+    // ============================================
+    
+    function calculerHeures() {
+      const heuresContrat = parseFloat(document.getElementById('heures-contrat').value) || 151.67;
+      const joursAbsence = parseFloat(document.getElementById('heures-absence').value) || 0;
+      const methode = document.getElementById('heures-methode').value;
+      const mois = parseInt(document.getElementById('heures-mois').value);
+      const annee = parseInt(document.getElementById('heures-annee').value);
+      
+      const info = getJoursInfo(mois, annee);
+      let heuresDeduites, baseCalc, methodeLabel;
+      
+      if (methode === 'ouvres') {
+        baseCalc = info.joursOuvres;
+        heuresDeduites = (heuresContrat / info.joursOuvres) * joursAbsence;
+        methodeLabel = 'Jours ouvrés réels';
+      } else if (methode === 'ouvrables') {
+        baseCalc = info.joursOuvrables;
+        heuresDeduites = (heuresContrat / info.joursOuvrables) * joursAbsence;
+        methodeLabel = 'Jours ouvrables réels';
+      } else if (methode === 'heures') {
+        baseCalc = info.joursOuvres;
+        heuresDeduites = 7 * joursAbsence;
+        methodeLabel = 'Heures réelles (7h/j)';
+      } else {
+        baseCalc = 30;
+        heuresDeduites = (heuresContrat / 30) * joursAbsence;
+        methodeLabel = 'Méthode 1/30ème';
+      }
+      
+      const heuresTravaillees = heuresContrat - heuresDeduites;
+      
+      document.getElementById('heures-methode-result').textContent = methodeLabel;
+      document.getElementById('heures-contrat-result').textContent = heuresContrat.toFixed(2) + ' h';
+      document.getElementById('heures-base-result').textContent = baseCalc + ' jours';
+      document.getElementById('heures-deduire-result').textContent = '- ' + heuresDeduites.toFixed(2) + ' h';
+      document.getElementById('heures-payer-result').textContent = heuresTravaillees.toFixed(2) + ' h';
+      
+      document.getElementById('heures-results').classList.remove('hidden');
+    }
+    
+    // ============================================
+    // JOURS
+    // ============================================
+    
+    function updateJoursInfo() {
+      const mois = parseInt(document.getElementById('jours-mois').value);
+      const annee = parseInt(document.getElementById('jours-annee').value);
+      
+      const info = getJoursInfo(mois, annee);
+      const feries = getJoursFeries(annee);
+      
+      document.getElementById('jours-calendaires').textContent = info.nbJoursMois;
+      document.getElementById('jours-ouvres').textContent = info.joursOuvres;
+      document.getElementById('jours-ouvrables').textContent = info.joursOuvrables;
+      document.getElementById('jours-feries-count').textContent = info.feriesDuMois.length;
+      document.getElementById('jours-annee-title').textContent = annee;
+      
+      // Fériés du mois
+      if (info.feriesDuMois.length > 0) {
+        let feriesMoisHtml = '';
+        for (const f of info.feriesDuMois) {
+          feriesMoisHtml += `
+            <div class="ferie-item">
+              <div>
+                <div style="font-weight:500;">${f.nom}</div>
+                <div style="font-size:0.75rem;color:#64748b;">${f.jour}</div>
+              </div>
+              <div class="mono" style="color:#64748b;">${formatDate(f.date)}</div>
+            </div>
+          `;
+        }
+        document.getElementById('feries-mois-list').innerHTML = feriesMoisHtml;
+      } else {
+        document.getElementById('feries-mois-list').innerHTML = '<p style="text-align:center;color:#94a3b8;padding:1rem;">Aucun jour férié ce mois-ci</p>';
+      }
+      
+      // Liste annuelle
+      let feriesAnneeHtml = '';
+      for (const f of feries) {
+        const estDansMois = f.date.getMonth() === mois;
+        feriesAnneeHtml += `
+          <div class="ferie-item ${estDansMois ? 'highlight' : ''}">
+            <div style="display:flex;align-items:center;">
+              <div class="ferie-dot" style="background:${estDansMois ? '#f59e0b' : '#cbd5e1'};"></div>
+              <div>
+                <div style="font-weight:500;${estDansMois ? 'color:#92400e;' : ''}">${f.nom}</div>
+                <div style="font-size:0.75rem;color:#64748b;">${f.jour}</div>
+              </div>
+            </div>
+            <div class="mono" style="font-size:0.875rem;${estDansMois ? 'color:#92400e;' : 'color:#64748b;'}">${formatDate(f.date)}</div>
+          </div>
+        `;
+      }
+      document.getElementById('feries-annee-list').innerHTML = feriesAnneeHtml;
+    }
+    
+    function toggleFeries() {
+      const list = document.getElementById('feries-mois-list');
+      const arrow = document.getElementById('feries-arrow');
+      list.classList.toggle('hidden');
+      arrow.textContent = list.classList.contains('hidden') ? '▼' : '▲';
+    }
+    
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    
+    function init() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+      
+      // Populate selects
+      const moisSelects = ['heures-mois', 'jours-mois'];
+      const anneeSelects = ['heures-annee', 'jours-annee'];
+      
+      for (const id of moisSelects) {
+        const select = document.getElementById(id);
+        select.innerHTML = MOIS.map((m, i) => `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${m}</option>`).join('');
+      }
+      
+      const annees = [];
+      for (let i = currentYear - 10; i <= currentYear + 10; i++) annees.push(i);
+      
+      for (const id of anneeSelects) {
+        const select = document.getElementById(id);
+        select.innerHTML = annees.map(a => `<option value="${a}" ${a === currentYear ? 'selected' : ''}>${a}</option>`).join('');
+      }
+      
+      // Init IJSS
+      initIjssMois();
+      checkIjssRegime();
+      
+      // Init jours
+      updateJoursInfo();
+      
+      // Footer
+      document.getElementById('footer-pmss').textContent = `PMSS ${currentYear} : ${getPMSS(currentYear).toLocaleString('fr-FR')} €`;
+      document.getElementById('footer-smic').textContent = `SMIC ${currentYear} : ${(SMIC_HORAIRE[currentYear] || 12.02).toFixed(2)} €/h`;
+    }
+    
+    init();
+  </script>
+</body>
+</html>
