@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Devis</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; width: 420px; min-height: 500px; background: #f8f6f3; color: #2c3e50; }
+    .header { background: #0c1b2a; padding: 15px 20px; display: flex; align-items: center; gap: 12px; }
+    .logo-icon { display: flex; gap: 3px; }
+    .logo-icon span { display: block; width: 4px; background: #c7a86e; border-radius: 1px; }
+    .logo-icon span:nth-child(1) { height: 20px; margin-top: 5px; background: #fff; }
+    .logo-icon span:nth-child(2) { height: 30px; background: #fff; }
+    .logo-icon span:nth-child(3) { height: 20px; margin-top: 5px; }
+    .header-text h1 { color: #fff; font-size: 16px; font-weight: 700; }
+    .header-text p { color: #c7a86e; font-size: 11px; }
+    .nav { display: flex; background: #fff; border-bottom: 1px solid #e8e4df; }
+    .nav-btn { flex: 1; padding: 10px; border: none; background: transparent; font-size: 12px; font-weight: 500; color: #5a6c7d; cursor: pointer; border-bottom: 2px solid transparent; }
+    .nav-btn.active { color: #0c1b2a; border-bottom-color: #c7a86e; }
+    .content { padding: 15px; }
+    .hidden { display: none; }
+    .section { background: #fff; border-radius: 10px; padding: 15px; margin-bottom: 12px; border: 1px solid #e8e4df; }
+    .section-title { font-size: 13px; font-weight: 600; color: #0c1b2a; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0ebe5; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; color: #5a6c7d; margin-bottom: 4px; text-transform: uppercase; }
+    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #e8e4df; border-radius: 6px; font-size: 13px; font-family: inherit; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #0c1b2a; }
+    .ligne-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .ligne-row select { flex: 2; padding: 8px; font-size: 12px; }
+    .ligne-row input { width: 60px; padding: 8px; font-size: 12px; text-align: center; }
+    .ligne-row .total { width: 70px; font-weight: 600; color: #c7a86e; font-size: 12px; text-align: right; }
+    .ligne-row .remove-btn { width: 28px; height: 28px; border: none; border-radius: 6px; background: #fee2e2; color: #dc2626; font-size: 16px; cursor: pointer; }
+    .add-btn { width: 100%; padding: 10px; border: 2px dashed #c7a86e; border-radius: 8px; background: transparent; color: #c7a86e; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .total-section { background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%); border-radius: 10px; padding: 15px; color: #fff; }
+    .total-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .total-row.main { padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2); margin-top: 10px; }
+    .total-row .label { font-size: 12px; opacity: 0.8; }
+    .total-row .amount { font-size: 14px; font-weight: 600; }
+    .total-row.main .amount { font-size: 20px; color: #c7a86e; }
+    .tva-note { text-align: center; font-size: 10px; opacity: 0.6; margin: 8px 0; }
+    .action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    .action-btn.primary { background: #c7a86e; color: #fff; }
+    .forfait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .forfait-card { background: #f8f6f3; padding: 12px; border-radius: 8px; }
+    .forfait-card label { display: block; font-size: 11px; color: #5a6c7d; margin-bottom: 6px; }
+    .forfait-card input[type="number"] { width: 100%; padding: 8px; border: 1px solid #e8e4df; border-radius: 6px; font-size: 16px; font-weight: 600; }
+    .forfait-card.checkbox { display: flex; align-items: center; gap: 8px; }
+    .forfait-card.checkbox input { width: 18px; height: 18px; }
+    .forfait-card.checkbox label { margin: 0; font-size: 12px; color: #2c3e50; }
+    .result-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0ebe5; font-size: 13px; }
+    .result-line .amount { font-weight: 600; color: #0c1b2a; }
+    .grille-cat { margin-bottom: 15px; }
+    .grille-cat-title { font-size: 12px; font-weight: 600; color: #c7a86e; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #f0ebe5; }
+    .grille-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; border-bottom: 1px solid #f8f6f3; }
+    .grille-item .ref { font-family: monospace; font-size: 10px; color: #5a6c7d; background: #e8e4df; padding: 2px 5px; border-radius: 3px; margin-right: 8px; }
+    .grille-item .tarif { font-weight: 600; color: #0c1b2a; white-space: nowrap; }
+    .scroll-content { max-height: 400px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="logo-icon"><span></span><span></span><span></span></div>
+  <div class="header-text">
+    <h1>NEXUS PAIES CONSEILS</h1>
+    <p>Calculateur de Devis</p>
+  </div>
+</header>
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchTab('devis')">📋 Devis</button>
+  <button class="nav-btn" onclick="switchTab('forfait')">📊 Forfait</button>
+  <button class="nav-btn" onclick="switchTab('grille')">💰 Grille</button>
+</nav>
+<div class="content">
+  <div id="tab-devis">
+    <div class="section">
+      <div class="section-title">👤 Client</div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Raison sociale</label>
+          <input type="text" id="client-rs" placeholder="SARL Dupont">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Salariés</label>
+          <input type="number" id="client-sal" placeholder="15">
+        </div>
+        <div class="form-group">
+          <label>Convention</label>
+          <select id="client-ccn">
+            <option value="">Choisir...</option>
+            <option>Syntec</option>
+            <option>BTP Ouvriers</option>
+            <option>BTP ETAM</option>
+            <option>HCR</option>
+            <option>Métallurgie</option>
+            <option>Commerce de gros</option>
+            <option>Transport</option>
+            <option>Autre</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">📝 Prestations</div>
+      <div id="lignes-container"></div>
+      <button class="add-btn" onclick="addLigne()">+ Ajouter une ligne</button>
+    </div>
+    <div class="total-section">
+      <div class="total-row">
+        <span class="label">Total HT</span>
+        <span class="amount" id="total-ht">0.00 €</span>
+      </div>
+      <div class="tva-note">TVA non applicable - Art. 293B CGI</div>
+      <div class="total-row main">
+        <span class="label">NET À PAYER</span>
+        <span class="amount" id="total-net">0.00 €</span>
+      </div>
+    </div>
+    <button class="action-btn primary" onclick="openFullVersion()">🖨️ Version complète</button>
+  </div>
+  <div id="tab-forfait" class="hidden">
+    <div class="section">
+      <div class="section-title">📊 Paramètres</div>
+      <div class="forfait-grid">
+        <div class="forfait-card">
+          <label>Salariés</label>
+          <input type="number" id="forf-sal" value="5" onchange="calcForfait()">
+        </div>
+        <div class="forfait-card">
+          <label>Entrées/mois</label>
+          <input type="number" id="forf-in" value="0" onchange="calcForfait()">
+        </div>
+        <div class="forfait-card">
+          <label>Sorties/mois</label>
+          <input type="number" id="forf-out" value="0" onchange="calcForfait()">
+        </div>
+        <div class="forfait-card checkbox">
+          <input type="checkbox" id="forf-coffre" checked onchange="calcForfait()">
+          <label>Coffre-fort</label>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">💶 Estimation</div>
+      <div id="forfait-details"></div>
+    </div>
+    <div class="total-section">
+      <div class="total-row">
+        <span class="label">Forfait mensuel</span>
+        <span class="amount" id="forf-mens">0.00 €</span>
+      </div>
+      <div class="total-row main">
+        <span class="label">Forfait annuel</span>
+        <span class="amount" id="forf-an">0.00 €</span>
+      </div>
+    </div>
+  </div>
+  <div id="tab-grille" class="hidden">
+    <div class="section">
+      <div class="section-title">💰 Grille tarifaire 2025</div>
+      <div class="scroll-content" id="grille-content"></div>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
