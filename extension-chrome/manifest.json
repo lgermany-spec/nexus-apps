@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Nexus Paies - Calculateur de Devis",
+  "version": "1.0.0",
+  "description": "Calculateur de devis pour Nexus Paies Conseils - Lauriane GERMANY",
+  "author": "Nexus Paies Conseils",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Nexus Paies - Devis"
+  },
+  "permissions": ["storage"]
+}
