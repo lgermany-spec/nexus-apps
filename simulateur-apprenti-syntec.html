@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Apprenti Syntec 2025-2026 | Nexus Paies Conseils</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: linear-gradient(180deg, #f8f6f3 0%, #efe9e1 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Header */
+        .header {
+            background: #0c1b2a;
+            padding: 25px 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #c7a86e 0%, #b8956a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+        
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #c7a86e;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* Année selector */
+        .year-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .year-btn {
+            padding: 12px 30px;
+            border: 2px solid #0c1b2a;
+            background: #fff;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .year-btn:hover {
+            background: #f8f6f3;
+        }
+        
+        .year-btn.active {
+            background: #0c1b2a;
+            color: #c7a86e;
+        }
+        
+        /* Cards */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e8e4df;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #0c1b2a;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #c7a86e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #5a6c7d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group select,
+        .form-group input {
+            padding: 12px 14px;
+            border: 2px solid #e8e4df;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #c7a86e;
+            box-shadow: 0 0 0 3px rgba(199, 168, 110, 0.15);
+        }
+        
+        .form-group small {
+            color: #8a9aab;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        /* Button */
+        .btn-calculate {
+            background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%);
+            color: #fff;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 25px auto 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(12, 27, 42, 0.3);
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(12, 27, 42, 0.4);
+        }
+        
+        /* Results */
+        .results {
+            display: none;
+            margin-top: 25px;
+        }
+        
+        .result-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e4df;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        .result-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            color: #0c1b2a;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8e4df;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f3f0;
+        }
+        
+        .result-row:last-child { border-bottom: none; }
+        
+        .result-label { color: #5a6c7d; font-size: 14px; }
+        .result-value { font-weight: 600; color: #0c1b2a; font-size: 14px; }
+        
+        .result-box-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .result-box-brut {
+            background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%);
+            color: #fff;
+            padding: 25px;
+            border-radius: 14px;
+            text-align: center;
+        }
+        
+        .result-box-net {
+            background: linear-gradient(135deg, #c7a86e 0%, #b8956a 100%);
+            color: #fff;
+            padding: 25px;
+            border-radius: 14px;
+            text-align: center;
+        }
+        
+        .result-box-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .result-box-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .result-box-sub {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+        
+        /* Highlights */
+        .highlight {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .highlight-blue {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            color: #1a5276;
+        }
+        
+        .highlight-green {
+            background: #e8f8f0;
+            border-left: 4px solid #27ae60;
+            color: #1e8449;
+        }
+        
+        .highlight-amber {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            color: #9a7d0a;
+        }
+        
+        .highlight-red {
+            background: #fdedec;
+            border-left: 4px solid #e74c3c;
+            color: #943126;
+        }
+        
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .comparison-table th {
+            background: #f8f6f3;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #0c1b2a;
+            border-bottom: 2px solid #e8e4df;
+        }
+        
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0ebe6;
+        }
+        
+        .comparison-table tr:last-child td { border-bottom: none; }
+        
+        .comparison-table .winner {
+            background: #e8f8f0;
+            font-weight: 600;
+        }
+        
+        /* Info box */
+        .info-box {
+            background: #f8f6f3;
+            border: 1px solid #e8e4df;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .info-box strong { color: #0c1b2a; }
+        
+        .info-box ul {
+            margin: 10px 0 0 20px;
+            padding-left: 0;
+        }
+        
+        .info-box li { margin-bottom: 5px; }
+        
+        /* Footer */
+        .footer {
+            background: #0c1b2a;
+            padding: 25px 40px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .footer-text {
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .footer-small {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { padding: 20px; }
+            .header h1 { font-size: 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .result-box-main { grid-template-columns: 1fr; }
+            .result-box-amount { font-size: 26px; }
+        }
+        
+        /* Hidden */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-icon">🎓</div>
+        <div>
+            <h1>Simulateur Apprenti Syntec</h1>
+            <p>Calcul de la rémunération 2025-2026</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sélecteur d'année -->
+        <div class="year-selector">
+            <button class="year-btn active" onclick="setYear(2025)">📅 2025</button>
+            <button class="year-btn" onclick="setYear(2026)">📅 2026</button>
+        </div>
+        
+        <!-- Info constantes -->
+        <div class="card" style="background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%); color: #fff;">
+            <div style="display: flex; justify-content: space-around; text-align: center; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <div style="font-size: 12px; color: #c7a86e; margin-bottom: 5px;">SMIC MENSUEL</div>
+                    <div class="mono" style="font-size: 22px; font-weight: 700;" id="display-smic">1 801,80 €</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #c7a86e; margin-bottom: 5px;">SMIC HORAIRE</div>
+                    <div class="mono" style="font-size: 22px; font-weight: 700;" id="display-smic-h">11,88 €</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #c7a86e; margin-bottom: 5px;">SMC MIN. SYNTEC</div>
+                    <div class="mono" style="font-size: 22px; font-weight: 700;" id="display-smc">1 815 €</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alerte SMC provisoire 2026 -->
+        <div id="alerte-smc-provisoire" class="card hidden" style="background: #fef3c7; border: 2px solid #f59e0b; padding: 15px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <span style="font-size: 24px;">⚠️</span>
+                <div>
+                    <strong style="color: #92400e;">SMC Syntec 2026 : En attente de négociation</strong>
+                    <p style="margin-top: 5px; font-size: 13px; color: #78350f; line-height: 1.5;">
+                        Les Salaires Minimaux Conventionnels 2026 ne sont pas encore publiés. Les valeurs 2025 sont affichées à titre provisoire.<br>
+                        <em>L'accord du 26/06/2024 prévoit une négociation en 2025 avec une proposition de base de +20€/mois.</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="card">
+            <div class="card-title">👤 Informations de l'apprenti</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Âge de l'apprenti</label>
+                    <select id="age">
+                        <option value="16">16 ans</option>
+                        <option value="17">17 ans</option>
+                        <option value="18" selected>18 ans</option>
+                        <option value="19">19 ans</option>
+                        <option value="20">20 ans</option>
+                        <option value="21">21 ans</option>
+                        <option value="22">22 ans</option>
+                        <option value="23">23 ans</option>
+                        <option value="24">24 ans</option>
+                        <option value="25">25 ans</option>
+                        <option value="26">26 ans</option>
+                        <option value="27">27 ans</option>
+                        <option value="28">28 ans</option>
+                        <option value="29">29 ans</option>
+                    </select>
+                    <small>Âge au début du contrat</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Année d'exécution</label>
+                    <select id="annee">
+                        <option value="1">1ère année</option>
+                        <option value="2">2ème année</option>
+                        <option value="3">3ème année</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Diplôme préparé</label>
+                    <select id="diplome">
+                        <optgroup label="Niveau 3 (CAP, BEP)">
+                            <option value="CAP">CAP</option>
+                            <option value="BEP">BEP</option>
+                        </optgroup>
+                        <optgroup label="Niveau 4 (Bac)">
+                            <option value="BAC_PRO">Bac Professionnel</option>
+                            <option value="BAC_TECHNO">Bac Technologique</option>
+                            <option value="BAC_GENERAL">Bac Général</option>
+                            <option value="BP">Brevet Professionnel</option>
+                        </optgroup>
+                        <optgroup label="Niveau 5 (Bac+2)">
+                            <option value="BTS" selected>BTS</option>
+                            <option value="DUT">DUT / BUT2</option>
+                        </optgroup>
+                        <optgroup label="Niveau 6 (Bac+3)">
+                            <option value="BUT3">BUT3</option>
+                            <option value="LICENCE_PRO">Licence Professionnelle</option>
+                            <option value="LICENCE">Licence</option>
+                            <option value="BACHELOR">Bachelor</option>
+                        </optgroup>
+                        <optgroup label="Niveau 7-8 (Bac+4/5)">
+                            <option value="M1">Master 1</option>
+                            <option value="M2">Master 2</option>
+                            <option value="INGENIEUR">Diplôme d'Ingénieur</option>
+                            <option value="MASTERE">Mastère Spécialisé</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Position Syntec</label>
+                    <select id="position" disabled>
+                        <option value="2.1">Position 2.1 (Coeff 270) - ETAM</option>
+                    </select>
+                    <small>Déterminée automatiquement selon le diplôme</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📋 Succession de contrats</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Succession de contrats ?</label>
+                    <select id="succession" onchange="toggleSuccession()">
+                        <option value="non">Non</option>
+                        <option value="oui">Oui</option>
+                    </select>
+                    <small>Article D6222-30 du Code du travail</small>
+                </div>
+                
+                <div class="form-group hidden" id="dernierSalaireGroup">
+                    <label>Dernier salaire perçu</label>
+                    <input type="number" id="dernierSalaire" placeholder="Ex: 1200" step="0.01">
+                    <small>Salaire brut mensuel du précédent contrat</small>
+                </div>
+                
+                <div class="form-group hidden" id="memeEmployeurGroup">
+                    <label>Même employeur ?</label>
+                    <select id="memeEmployeur">
+                        <option value="non">Non</option>
+                        <option value="oui">Oui</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-calculate" onclick="calculerRemuneration()">
+            🧮 Calculer la rémunération
+        </button>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <footer class="footer">
+        <p class="footer-text"><strong>Nexus Paies Conseils</strong> — Expertise paie multi-conventions</p>
+        <p class="footer-small">Calculs indicatifs • Vérifiez avec votre OPCO Atlas</p>
+    </footer>
+
+    <script>
+        // ============================================
+        // CONSTANTES 2025 ET 2026
+        // ============================================
+        
+        let selectedYear = 2025;
+        
+        const CONSTANTES = {
+            2025: {
+                SMIC: 1801.80,
+                SMIC_HORAIRE: 11.88,
+                SMC_ETAM: {
+                    '1.1': 1815, '1.2': 1875,
+                    '2.1': 1875, '2.2': 1955, '2.3': 2030,
+                    '3.1': 2045, '3.2': 2215, '3.3': 2540
+                },
+                SMC_IC: {
+                    '1.1': 2540, '1.2': 2795, '1.3': 3045,
+                    '2.1': 3275, '2.2': 3575, '2.3': 3940,
+                    '3.1': 4430, '3.2': 5145, '3.3': 6600
+                },
+                smcProvisoire: false
+            },
+            2026: {
+                SMIC: 1823.03,  // Officiel (Décret du 12/12/2025)
+                SMIC_HORAIRE: 12.02,  // Officiel
+                // SMC 2026 : En attente de négociation - Valeurs 2025 maintenues provisoirement
+                // Négociation prévue en 2025 avec proposition de base +20€ (Accord 26/06/2024)
+                SMC_ETAM: {
+                    '1.1': 1815, '1.2': 1875,
+                    '2.1': 1875, '2.2': 1955, '2.3': 2030,
+                    '3.1': 2045, '3.2': 2215, '3.3': 2540
+                },
+                SMC_IC: {
+                    '1.1': 2540, '1.2': 2795, '1.3': 3045,
+                    '2.1': 3275, '2.2': 3575, '2.3': 3940,
+                    '3.1': 4430, '3.2': 5145, '3.3': 6600
+                },
+                smcProvisoire: true
+            }
+        };
+
+        // Table diplôme → configuration
+        const DIPLOME_CONFIG = {
+            'CAP': { niveau: 3, position: '1.1', coeff: 240, statut: 'ETAM', categorie: 'niveau_345' },
+            'BEP': { niveau: 3, position: '1.1', coeff: 240, statut: 'ETAM', categorie: 'niveau_345' },
+            'BAC_PRO': { niveau: 4, position: '1.2', coeff: 250, statut: 'ETAM', categorie: 'niveau_345' },
+            'BAC_TECHNO': { niveau: 4, position: '1.2', coeff: 250, statut: 'ETAM', categorie: 'niveau_345' },
+            'BAC_GENERAL': { niveau: 4, position: '1.2', coeff: 250, statut: 'ETAM', categorie: 'niveau_345' },
+            'BP': { niveau: 4, position: '1.2', coeff: 250, statut: 'ETAM', categorie: 'niveau_345' },
+            'BTS': { niveau: 5, position: '2.1', coeff: 270, statut: 'ETAM', categorie: 'niveau_345' },
+            'DUT': { niveau: 5, position: '2.1', coeff: 270, statut: 'ETAM', categorie: 'niveau_345' },
+            'BUT3': { niveau: 6, position: '2.2', coeff: 285, statut: 'ETAM', categorie: 'niveau_6' },
+            'LICENCE_PRO': { niveau: 6, position: '2.2', coeff: 285, statut: 'ETAM', categorie: 'niveau_6' },
+            'LICENCE': { niveau: 6, position: '2.3', coeff: 300, statut: 'ETAM', categorie: 'niveau_6' },
+            'BACHELOR': { niveau: 6, position: '2.3', coeff: 300, statut: 'ETAM', categorie: 'niveau_6' },
+            'M1': { niveau: 7, position: '3.1', coeff: 355, statut: 'ETAM', categorie: 'niveau_78' },
+            'M2': { niveau: 8, position: 'IC-1.1', coeff: 450, statut: 'IC', categorie: 'niveau_78' },
+            'INGENIEUR': { niveau: 8, position: 'IC-1.2', coeff: 500, statut: 'IC', categorie: 'niveau_78' },
+            'MASTERE': { niveau: 8, position: 'IC-1.3', coeff: 550, statut: 'IC', categorie: 'niveau_78' }
+        };
+
+        // Grilles de pourcentages
+        const GRILLE_SYNTEC = {
+            'moins_18': {
+                'niveau_345': [33, 43, 58],
+                'niveau_6': [33, 43, 58],
+                'niveau_78': [33, 43, 58]
+            },
+            '18_20': {
+                'niveau_345': [43, 58, 70],
+                'niveau_6': [43, 58, 70],
+                'niveau_78': [48, 68, 80]
+            },
+            '21_plus': {
+                'niveau_345': [55, 65, 80],
+                'niveau_6': [55, 65, 80],
+                'niveau_78': [65, 75, 80]
+            },
+            '26_plus': { 'tous': [100, 100, 100] }
+        };
+
+        const GRILLE_LEGALE = {
+            'moins_18': [27, 39, 55],
+            '18_20': [43, 51, 67],
+            '21_25': [53, 61, 78],
+            '26_plus': [100, 100, 100]
+        };
+
+        // ============================================
+        // FONCTIONS
+        // ============================================
+        
+        function setYear(year) {
+            selectedYear = year;
+            document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const c = CONSTANTES[selectedYear];
+            document.getElementById('display-smic').textContent = c.SMIC.toLocaleString('fr-FR', {minimumFractionDigits: 2}) + ' €';
+            document.getElementById('display-smic-h').textContent = c.SMIC_HORAIRE.toLocaleString('fr-FR', {minimumFractionDigits: 2}) + ' €';
+            document.getElementById('display-smc').textContent = c.SMC_ETAM['1.1'].toLocaleString('fr-FR') + ' €' + (c.smcProvisoire ? ' *' : '');
+            
+            // Afficher/masquer l'alerte SMC provisoire
+            const alerteDiv = document.getElementById('alerte-smc-provisoire');
+            if (c.smcProvisoire) {
+                alerteDiv.classList.remove('hidden');
+            } else {
+                alerteDiv.classList.add('hidden');
+            }
+        }
+        
+        function toggleSuccession() {
+            const show = document.getElementById('succession').value === 'oui';
+            document.getElementById('dernierSalaireGroup').classList.toggle('hidden', !show);
+            document.getElementById('memeEmployeurGroup').classList.toggle('hidden', !show);
+        }
+        
+        function updatePosition() {
+            const diplome = document.getElementById('diplome').value;
+            const config = DIPLOME_CONFIG[diplome];
+            if (config) {
+                const posSelect = document.getElementById('position');
+                posSelect.innerHTML = `<option value="${config.position}">Position ${config.position} (Coeff ${config.coeff}) - ${config.statut}</option>`;
+            }
+        }
+        
+        document.getElementById('diplome').addEventListener('change', updatePosition);
+        
+        function getSMC(position, statut) {
+            const c = CONSTANTES[selectedYear];
+            if (statut === 'IC' || position.startsWith('IC-')) {
+                const pos = position.replace('IC-', '');
+                return c.SMC_IC[pos] || c.SMC_IC['1.1'];
+            }
+            return c.SMC_ETAM[position] || c.SMC_ETAM['2.1'];
+        }
+        
+        function getPourcentageSyntec(age, categorie, annee) {
+            const idx = annee - 1;
+            if (age >= 26) return GRILLE_SYNTEC['26_plus']['tous'][idx];
+            if (age < 18) return GRILLE_SYNTEC['moins_18'][categorie][idx];
+            if (age <= 20) return GRILLE_SYNTEC['18_20'][categorie][idx];
+            return GRILLE_SYNTEC['21_plus'][categorie][idx];
+        }
+        
+        function getPourcentageLegal(age, annee) {
+            const idx = annee - 1;
+            if (age >= 26) return GRILLE_LEGALE['26_plus'][idx];
+            if (age >= 21) return GRILLE_LEGALE['21_25'][idx];
+            if (age >= 18) return GRILLE_LEGALE['18_20'][idx];
+            return GRILLE_LEGALE['moins_18'][idx];
+        }
+        
+        function calculerRemuneration() {
+            const age = parseInt(document.getElementById('age').value);
+            const annee = parseInt(document.getElementById('annee').value);
+            const diplome = document.getElementById('diplome').value;
+            const succession = document.getElementById('succession').value === 'oui';
+            const dernierSalaire = succession ? parseFloat(document.getElementById('dernierSalaire').value) || 0 : 0;
+            const memeEmployeur = succession ? document.getElementById('memeEmployeur').value === 'oui' : false;
+            
+            const config = DIPLOME_CONFIG[diplome];
+            const c = CONSTANTES[selectedYear];
+            const smc = getSMC(config.position, config.statut);
+            
+            // Calcul légal (base SMIC)
+            const pourcLegal = getPourcentageLegal(age, annee);
+            const salaireLegal = (c.SMIC * pourcLegal) / 100;
+            
+            // Calcul Syntec
+            const pourcSyntec = getPourcentageSyntec(age, config.categorie, annee);
+            let baseSyntec = age >= 21 ? smc : c.SMIC;
+            const salaireSyntec = (baseSyntec * pourcSyntec) / 100;
+            
+            // Minimum = le plus favorable
+            let salaireMinimum = Math.max(salaireLegal, salaireSyntec);
+            if (age >= 26) salaireMinimum = Math.max(salaireMinimum, c.SMIC, smc);
+            
+            const baseRetenue = salaireSyntec >= salaireLegal ? 'Syntec' : 'Légal';
+            
+            // Succession
+            let salaireFinal = salaireMinimum;
+            let successionAppliquee = false;
+            let successionDetail = '';
+            
+            if (succession && dernierSalaire > 0) {
+                if (dernierSalaire > salaireMinimum) {
+                    salaireFinal = dernierSalaire;
+                    successionAppliquee = true;
+                    successionDetail = memeEmployeur 
+                        ? `Maintien obligatoire du dernier salaire (même employeur)`
+                        : `Maintien du salaire précédent (nouvel employeur, qualification équivalente)`;
+                } else {
+                    successionDetail = `Le nouveau calcul (${salaireMinimum.toFixed(2)} €) est plus favorable que l'ancien salaire (${dernierSalaire.toFixed(2)} €)`;
+                }
+            }
+            
+            // Calcul NET (exonération totale pour apprentis)
+            const salaireNet = salaireFinal; // Brut = Net pour apprentis
+            
+            // Affichage
+            afficherResultats({
+                year: selectedYear,
+                age, annee, diplome,
+                config, smc,
+                pourcLegal, salaireLegal,
+                pourcSyntec, baseSyntec, salaireSyntec,
+                salaireMinimum, baseRetenue,
+                salaireFinal, salaireNet,
+                succession, dernierSalaire, memeEmployeur,
+                successionAppliquee, successionDetail,
+                SMIC: c.SMIC
+            });
+        }
+        
+        function afficherResultats(d) {
+            let html = `
+                <div class="result-card">
+                    <h3>📊 Comparaison Légal vs Syntec (${d.year})</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Calcul</th>
+                            <th>Base</th>
+                            <th>Pourcentage</th>
+                            <th>Salaire brut</th>
+                        </tr>
+                        <tr class="${d.baseRetenue === 'Légal' ? 'winner' : ''}">
+                            <td><strong>Légal</strong></td>
+                            <td class="mono">${d.SMIC.toLocaleString('fr-FR', {minimumFractionDigits: 2})} € (SMIC)</td>
+                            <td class="mono">${d.pourcLegal}%</td>
+                            <td class="mono">${d.salaireLegal.toFixed(2)} €</td>
+                        </tr>
+                        <tr class="${d.baseRetenue === 'Syntec' ? 'winner' : ''}">
+                            <td><strong>Syntec</strong></td>
+                            <td class="mono">${d.baseSyntec.toLocaleString('fr-FR', {minimumFractionDigits: 2})} € ${d.age >= 21 ? '(SMC)' : '(SMIC)'}</td>
+                            <td class="mono">${d.pourcSyntec}%</td>
+                            <td class="mono">${d.salaireSyntec.toFixed(2)} €</td>
+                        </tr>
+                    </table>
+                    <div class="highlight highlight-green">
+                        <strong>✅ Règle appliquée :</strong> ${d.baseRetenue} (le plus favorable)<br>
+                        <strong>💰 Salaire minimum :</strong> ${d.salaireMinimum.toFixed(2)} €
+                    </div>
+                </div>
+            `;
+            
+            if (d.succession) {
+                html += `
+                    <div class="result-card">
+                        <h3>🔄 Succession de contrats (Art. D6222-30)</h3>
+                        <div class="result-row">
+                            <span class="result-label">Dernier salaire perçu</span>
+                            <span class="result-value mono">${d.dernierSalaire.toFixed(2)} €</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Même employeur</span>
+                            <span class="result-value">${d.memeEmployeur ? 'Oui' : 'Non'}</span>
+                        </div>
+                        <div class="highlight ${d.successionAppliquee ? 'highlight-amber' : 'highlight-blue'}">
+                            ${d.successionAppliquee ? '⚠️' : 'ℹ️'} <strong>${d.successionAppliquee ? 'Maintien du salaire' : 'Pas de maintien'}</strong><br>
+                            ${d.successionDetail}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="result-card">
+                    <h3>🎯 Salaire de l'apprenti</h3>
+                    ${CONSTANTES[d.year].smcProvisoire ? `
+                    <div class="highlight highlight-amber" style="margin-bottom: 15px;">
+                        <strong>⚠️ Attention :</strong> Les SMC Syntec 2026 ne sont pas encore publiés. Ce calcul utilise les SMC 2025 à titre provisoire.
+                    </div>
+                    ` : ''}
+                    <div class="result-box-main">
+                        <div class="result-box-brut">
+                            <div class="result-box-label">Salaire mensuel BRUT</div>
+                            <div class="result-box-amount">${d.salaireFinal.toFixed(2)} €</div>
+                            <div class="result-box-sub">Base 151,67 h/mois</div>
+                        </div>
+                        <div class="result-box-net">
+                            <div class="result-box-label">Salaire mensuel NET</div>
+                            <div class="result-box-amount">≈ ${d.salaireNet.toFixed(2)} €</div>
+                            <div class="result-box-sub">Exonération apprenti</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>💡 Informations</strong>
+                        <ul>
+                            <li><strong>Exonération d'impôt</strong> jusqu'à 21 274 € annuels (seuil ${d.year})</li>
+                            <li><strong>Cotisations salariales :</strong> Exonérées pour les apprentis</li>
+                            <li><strong>Changement d'âge :</strong> Revalorisation au 1er du mois suivant l'anniversaire</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>📚 Sources juridiques</strong>
+                        <ul>
+                            <li>Code du travail : Articles L6222-27 à L6222-29, D6222-26 à D6222-30</li>
+                            <li>Convention Collective Syntec (IDCC 1486)</li>
+                            <li>Accord du 28 juin 2011 - Rémunérations apprentis</li>
+                            <li>Accord du 26 juin 2024 - Salaires minimaux (étendu le 27/11/2024)</li>
+                            ${d.year === 2026 ? '<li><strong>SMIC 2026 :</strong> Décret du 12/12/2025 - 1 823,03 € (+1,18%)</li>' : ''}
+                            ${d.year === 2026 ? '<li><strong>SMC Syntec 2026 :</strong> En attente de négociation (valeurs 2025 utilisées)</li>' : ''}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Initialisation
+        updatePosition();
+        updateDisplay();
+    </script>
+</body>
+</html>
