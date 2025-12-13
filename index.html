@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Paies Conseils - Applications</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', -apple-system, sans-serif; background: linear-gradient(180deg, #f8f6f3 0%, #efe9e1 100%); min-height: 100vh; color: #2c3e50; }
+    .header { background: #fff; padding: 30px 40px; text-align: center; box-shadow: 0 2px 12px rgba(12,27,42,0.08); border-bottom: 3px solid #c7a86e; }
+    .header-subtitle { color: #5a6c7d; font-size: 14px; margin-top: 5px; }
+    .main { max-width: 1000px; margin: 0 auto; padding: 50px 40px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: #0c1b2a; text-align: center; margin-bottom: 40px; }
+    .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+    .app-card { background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e8e4df; transition: all 0.3s ease; text-decoration: none; color: inherit; display: block; }
+    .app-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-color: #c7a86e; }
+    .app-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #0c1b2a 0%, #1a2d3d 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
+    .app-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: #0c1b2a; margin-bottom: 10px; }
+    .app-description { color: #5a6c7d; font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+    .app-status { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .app-status.active { background: #d4edda; color: #155724; }
+    .app-status.coming { background: #fff3cd; color: #856404; }
+    .footer { background: #0c1b2a; padding: 30px 40px; text-align: center; margin-top: 60px; }
+    .footer-text { color: #fff; font-size: 15px; margin-bottom: 8px; }
+    .footer-small { color: rgba(255,255,255,0.6); font-size: 12px; }
+    .app-card.disabled { opacity: 0.7; cursor: not-allowed; }
+    .app-card.disabled:hover { transform: none; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-color: #e8e4df; }
+  </style>
+</head>
+<body>
+<header class="header">
+  <svg width="320" height="100" viewBox="0 0 1200 400" role="img" aria-label="Nexus Paies Conseils">
+    <g transform="translate(40,80)">
+      <rect x="0" y="40" width="16" height="180" fill="#0c1b2a"/>
+      <rect x="44" y="0" width="16" height="260" fill="#0c1b2a"/>
+      <rect x="88" y="40" width="16" height="180" fill="#c7a86e"/>
+    </g>
+    <g transform="translate(180,120)">
+      <text x="0" y="80" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="800" font-size="120" fill="#0c1b2a">NEXUS</text>
+      <rect x="0" y="120" width="760" height="4" fill="#c7a86e"/>
+      <text x="0" y="190" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="600" font-size="44" letter-spacing="10" fill="#c7a86e">PAIES CONSEILS</text>
+    </g>
+  </svg>
+  <p class="header-subtitle">Lauriane GERMANY - Consultante paie & RH</p>
+</header>
+<main class="main">
+  <h1 class="section-title">📱 Mes Applications</h1>
+  <div class="apps-grid">
+    <a href="calculateur-devis.html" class="app-card">
+      <div class="app-icon">📋</div>
+      <h2 class="app-title">Calculateur de Devis</h2>
+      <p class="app-description">Générez vos devis professionnels avec la grille tarifaire complète. Prévisualisation et impression intégrées.</p>
+      <span class="app-status active">✓ Disponible</span>
+    </a>
+    <div class="app-card disabled">
+      <div class="app-icon">🎓</div>
+      <h2 class="app-title">Simulateur Apprenti Syntec</h2>
+      <p class="app-description">Calculez les salaires des apprentis selon la convention Syntec 2025. SMIC et SMC à jour.</p>
+      <span class="app-status coming">⏳ Bientôt disponible</span>
+    </div>
+    <div class="app-card disabled">
+      <div class="app-icon">💰</div>
+      <h2 class="app-title">Calculateur Indemnités</h2>
+      <p class="app-description">Calculez les indemnités de rupture : licenciement,
