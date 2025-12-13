@@ -2196,6 +2196,30 @@
       // Footer
       document.getElementById('footer-pmss').textContent = `PMSS ${currentYear} : ${getPMSS(currentYear).toLocaleString('fr-FR')} €`;
       document.getElementById('footer-smic').textContent = `SMIC ${currentYear} : ${(SMIC_HORAIRE[currentYear] || 12.02).toFixed(2)} €/h`;
+      
+      // Navigation buttons
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const moduleName = this.getAttribute('data-module');
+          
+          // Update active button
+          document.querySelectorAll('.nav-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = '';
+            b.style.color = '';
+          });
+          this.classList.add('active');
+          this.style.background = '#3b82f6';
+          this.style.color = 'white';
+          
+          // Show/hide modules
+          document.querySelectorAll('.module').forEach(m => m.classList.add('hidden'));
+          const targetModule = document.getElementById('module-' + moduleName);
+          if (targetModule) {
+            targetModule.classList.remove('hidden');
+          }
+        });
+      });
     }
     
     init();
