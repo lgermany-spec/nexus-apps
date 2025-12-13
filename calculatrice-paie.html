@@ -1154,6 +1154,9 @@
           </div>
           
           <div id="pat-results" class="hidden">
+            <div id="pat-alerte-depassement" class="alert hidden" style="background:#fef2f2;border:2px solid #fecaca;color:#991b1b;padding:1rem;border-radius:12px;margin-bottom:1rem;">
+            </div>
+            
             <div class="info-box" style="margin-bottom:1rem;background:#f0f9ff;border-color:#bae6fd;">
               <div class="info-title" style="color:#0369a1;">👶 Naissance <span id="pat-type-naissance"></span></div>
               <div style="color:#64748b;font-size:0.875rem;">Date : <span id="pat-date-result"></span></div>
@@ -2051,7 +2054,29 @@
       document.getElementById('pat-nb-periodes').textContent = periodes.length + ' période(s)';
       document.getElementById('pat-total-jours').textContent = congeNaissance + congePaterniteTotal;
       
+      // Vérification dépassement des 6 mois
+      const dernierePeriode = periodes[periodes.length - 1];
+      const dateFin = parseDate(dernierePeriode.fin);
+      const alerteDepassement = document.getElementById('pat-alerte-depassement');
+      
+      if (dateFin > dateLimite) {
+        const joursDepassement = Math.ceil((dateFin - dateLimite) / (1000 * 60 * 60 * 24));
+        alerteDepassement.innerHTML = `
+          <strong>⚠️ Attention : Dépassement du délai légal !</strong><br>
+          La dernière période se termine le ${dernierePeriode.fin}, soit <strong>${joursDepassement} jour(s)</strong> après la date limite du ${formatDate(dateLimite)}.<br>
+          <em>Le congé paternité doit être pris dans les 6 mois suivant la naissance.</em>
+        `;
+        alerteDepassement.classList.remove('hidden');
+      } else {
+        alerteDepassement.classList.add('hidden');
+      }
+      
       document.getElementById('pat-results').classList.remove('hidden');
+    }
+    
+    function parseDate(dateStr) {
+      const parts = dateStr.split('/');
+      return new Date(parts[2], parts[1] - 1, parts[0]);
     }
     
     // ============================================
