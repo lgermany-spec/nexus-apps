@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Net Après Impôt | Nexus Paies Conseils</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bleu-marine: #0f2744;
+            --bleu-marine-light: #1a3a5c;
+            --bleu-marine-dark: #091a2e;
+            --or: #c9a227;
+            --or-light: #d4b94a;
+            --or-dark: #a88a1f;
+            --blanc-casse: #faf9f7;
+            --gris-chaud: #6b7280;
+            --gris-clair: #e8e6e3;
+            --success: #059669;
+            --error: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: linear-gradient(135deg, var(--bleu-marine-dark) 0%, var(--bleu-marine) 50%, var(--bleu-marine-light) 100%);
+            min-height: 100vh;
+            color: var(--blanc-casse);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--or) 0%, var(--or-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--bleu-marine-dark);
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.3);
+        }
+
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-text span {
+            color: var(--or);
+        }
+
+        .header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--blanc-casse);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.4rem;
+            border-radius: 12px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--or) 0%, var(--or-light) 100%);
+            color: var(--bleu-marine-dark);
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.3);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--or);
+            border-radius: 2px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            padding-right: 3rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            color: var(--blanc-casse);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--or);
+            box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        select {
+            padding-right: 2.5rem;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+        }
+
+        select option {
+            background: var(--bleu-marine);
+            color: var(--blanc-casse);
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .radio-option input {
+            display: none;
+        }
+
+        .radio-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .radio-option input:checked + label {
+            background: rgba(201, 162, 39, 0.15);
+            border-color: var(--or);
+            color: var(--or-light);
+        }
+
+        .radio-option label:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Results */
+        .results {
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .result-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .result-item.highlight {
+            background: linear-gradient(135deg, rgba(201, 162, 39, 0.15) 0%, rgba(201, 162, 39, 0.08) 100%);
+            border-left-color: var(--or);
+        }
+
+        .result-item.final {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+            border-left-color: var(--success);
+            margin-top: 0.5rem;
+        }
+
+        .result-label {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .result-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--blanc-casse);
+        }
+
+        .result-item.highlight .result-value {
+            color: var(--or-light);
+        }
+
+        .result-item.final .result-value {
+            color: #34d399;
+            font-size: 1.4rem;
+        }
+
+        .result-item.deduction .result-value {
+            color: #f87171;
+        }
+
+        .result-separator {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(201, 162, 39, 0.1);
+            border: 1px solid rgba(201, 162, 39, 0.25);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .info-box strong {
+            color: var(--or-light);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        .footer a {
+            color: var(--or);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--or-light);
+        }
+
+        /* Hidden panels */
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* Sub-tabs pour Micro-entreprise */
+        .sub-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.3rem;
+            border-radius: 10px;
+        }
+
+        .sub-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 7px;
+            transition: all 0.3s ease;
+        }
+
+        .sub-tab:hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sub-tab.active {
+            background: rgba(201, 162, 39, 0.25);
+            color: var(--or-light);
+            border: 1px solid rgba(201, 162, 39, 0.4);
+        }
+
+        .sub-panel {
+            display: none;
+        }
+
+        .sub-panel.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem 1rem 2rem;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .logo-text {
+                font-size: 1.4rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .tab {
+                padding: 0.875rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-option {
+                min-width: 100%;
+            }
+        }
+
+        /* Decorative elements */
+        .decoration {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.03;
+        }
+
+        .decoration-1 {
+            top: 10%;
+            right: 5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--or) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .decoration-2 {
+            bottom: 10%;
+            left: 5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--or) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration decoration-1"></div>
+    <div class="decoration decoration-2"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">N</div>
+                <div class="logo-text">Nexus <span>Paies Conseils</span></div>
+            </div>
+            <h1>Simulateur Net Après Impôt</h1>
+            <p>Estimez votre revenu réel en quelques clics</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="salarie" onclick="switchTab('salarie')">
+                👤 Salarié
+            </button>
+            <button class="tab" data-tab="micro" onclick="switchTab('micro')">
+                🏢 Micro → Net
+            </button>
+            <button class="tab" data-tab="reverse" onclick="switchTab('reverse')">
+                🔄 Salaire → CA
+            </button>
+        </div>
+
+        <!-- Panel Salarié -->
+        <div id="panel-salarie" class="panel active">
+            <div class="card">
+                <h2 class="card-title">Paramètres de calcul</h2>
+                
+                <div class="form-group">
+                    <label for="salaire-brut">Salaire brut mensuel</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="salaire-brut" placeholder="3 000" min="0" step="100" oninput="calculerSalarie()">
+                        <span class="input-suffix">€</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="statut-cadre">Statut</label>
+                        <select id="statut-cadre" onchange="calculerSalarie()">
+                            <option value="non-cadre">Non-cadre</option>
+                            <option value="cadre">Cadre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="parts-fiscales">Parts fiscales</label>
+                        <select id="parts-fiscales" onchange="calculerSalarie()">
+                            <option value="1">1 part (célibataire)</option>
+                            <option value="1.5">1,5 parts</option>
+                            <option value="2">2 parts (couple)</option>
+                            <option value="2.5">2,5 parts</option>
+                            <option value="3">3 parts</option>
+                            <option value="3.5">3,5 parts</option>
+                            <option value="4">4 parts</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Taux d'imposition à la source</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="taux-auto" name="taux-type" value="auto" checked onchange="calculerSalarie()">
+                            <label for="taux-auto">Calculé automatiquement</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="taux-perso" name="taux-type" value="perso" onchange="calculerSalarie()">
+                            <label for="taux-perso">Personnalisé</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="taux-perso-input" style="display: none;">
+                    <label for="taux-manuel">Taux personnalisé</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="taux-manuel" placeholder="10" min="0" max="45" step="0.1" oninput="calculerSalarie()">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card results">
+                <h2 class="card-title">Résultats mensuels</h2>
+                <div class="result-grid">
+                    <div class="result-item highlight">
+                        <span class="result-label">Salaire brut</span>
+                        <span class="result-value" id="res-brut">0 €</span>
+                    </div>
+                    <div class="result-item deduction">
+                        <span class="result-label">Cotisations salariales</span>
+                        <span class="result-value" id="res-cotisations">- 0 €</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Salaire net avant impôt</span>
+                        <span class="result-value" id="res-net-avant">0 €</span>
+                    </div>
+                    <div class="result-item deduction">
+                        <span class="result-label">Impôt à la source (<span id="taux-affiche">0</span>%)</span>
+                        <span class="result-value" id="res-impot">- 0 €</span>
+                    </div>
+                    <div class="result-separator"></div>
+                    <div class="result-item final">
+                        <span class="result-label">Net après impôt</span>
+                        <span class="result-value" id="res-net-final">0 €</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 À noter :</strong> Les cotisations salariales varient selon le statut (≈22% non-cadre, ≈23% cadre). 
+                    Le taux d'imposition est calculé sur la base du barème 2025 de l'impôt sur le revenu.
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Micro-Entreprise -->
+        <div id="panel-micro" class="panel">
+            
+            <!-- Sous-onglets Micro -->
+            <div class="sub-tabs">
+                <button class="sub-tab active" data-subtab="ca-vers-net" onclick="switchSubTab('ca-vers-net')">
+                    CA → Net
+                </button>
+                <button class="sub-tab" data-subtab="net-vers-ca" onclick="switchSubTab('net-vers-ca')">
+                    Net → CA
+                </button>
+            </div>
+
+            <!-- Sub-panel CA vers Net -->
+            <div id="subpanel-ca-vers-net" class="sub-panel active">
+                <div class="card">
+                    <h2 class="card-title">Du CA vers le net</h2>
+                    
+                    <div class="form-group">
+                        <label for="ca-mensuel">Chiffre d'affaires mensuel</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="ca-mensuel" placeholder="5 000" min="0" step="100" oninput="calculerMicro()">
+                            <span class="input-suffix">€</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Type d'activité</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="activite-bnc" name="activite" value="bnc" checked onchange="calculerMicro(); calculerInverse();">
+                                <label for="activite-bnc">Prestations de services BNC</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="activite-bic-services" name="activite" value="bic-services" onchange="calculerMicro(); calculerInverse();">
+                                <label for="activite-bic-services">Prestations de services BIC</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="activite-bic-vente" name="activite" value="bic-vente" onchange="calculerMicro(); calculerInverse();">
+                                <label for="activite-bic-vente">Vente de marchandises</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="parts-fiscales-micro">Parts fiscales</label>
+                            <select id="parts-fiscales-micro" onchange="calculerMicro(); calculerInverse();">
+                                <option value="1">1 part (célibataire)</option>
+                                <option value="1.5">1,5 parts</option>
+                                <option value="2">2 parts (couple)</option>
+                                <option value="2.5">2,5 parts</option>
+                                <option value="3">3 parts</option>
+                                <option value="3.5">3,5 parts</option>
+                                <option value="4">4 parts</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="versement-liberatoire">Versement libératoire IR</label>
+                            <select id="versement-liberatoire" onchange="calculerMicro(); calculerInverse();">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="acre">ACRE (1ère année)</label>
+                        <select id="acre" onchange="calculerMicro(); calculerInverse();">
+                            <option value="non">Non</option>
+                            <option value="oui">Oui - Taux réduit 50%</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Taux de charges global</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="taux-global-auto" name="taux-global-type" value="auto" checked onchange="toggleTauxGlobal()">
+                                <label for="taux-global-auto">Calculé automatiquement</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="taux-global-perso" name="taux-global-type" value="perso" onchange="toggleTauxGlobal()">
+                                <label for="taux-global-perso">Je connais mon taux</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="taux-global-input" style="display: none;">
+                        <label for="taux-global-manuel">Taux global connu (cotisations + IR)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="taux-global-manuel" placeholder="35" min="0" max="80" step="0.1" oninput="calculerMicro()">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="taux-global-auto" name="taux-global-type" value="auto" checked onchange="toggleTauxGlobal()">
+                            <label for="taux-global-auto">Calculé automatiquement</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="taux-global-perso" name="taux-global-type" value="perso" onchange="toggleTauxGlobal()">
+                            <label for="taux-global-perso">Je connais mon taux</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="taux-global-input" style="display: none;">
+                    <label for="taux-global-manuel">Taux global connu (cotisations + IR)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="taux-global-manuel" placeholder="35" min="0" max="80" step="0.1" oninput="calculerMicro()">
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card results">
+                <h2 class="card-title">Résultats mensuels</h2>
+                <div class="result-grid">
+                    <div class="result-item highlight">
+                        <span class="result-label">Chiffre d'affaires</span>
+                        <span class="result-value" id="res-ca">0 €</span>
+                    </div>
+                    <div class="result-item deduction">
+                        <span class="result-label">Cotisations sociales (<span id="taux-cotis">21,2</span>%)</span>
+                        <span class="result-value" id="res-cotis-micro">- 0 €</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Revenu après charges</span>
+                        <span class="result-value" id="res-apres-charges">0 €</span>
+                    </div>
+                    <div class="result-item deduction">
+                        <span class="result-label">Impôt sur le revenu (<span id="taux-ir-micro">0</span>%)</span>
+                        <span class="result-value" id="res-ir-micro">- 0 €</span>
+                    </div>
+                    <div class="result-separator"></div>
+                    <div class="result-item final">
+                        <span class="result-label">Revenu net après impôt</span>
+                        <span class="result-value" id="res-net-micro">0 €</span>
+                    </div>
+                </div>
+
+                <div class="result-grid" style="margin-top: 1rem;">
+                    <div class="result-item">
+                        <span class="result-label">📊 Revenu net annuel estimé</span>
+                        <span class="result-value" id="res-net-annuel">0 €</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">📈 Taux de charges global (cotisations + IR)</span>
+                        <span class="result-value" id="res-taux-global">0 %</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Taux de cotisations 2025 :</strong><br>
+                    • Prestations de services BNC : 24,6% (ou 12,3% avec ACRE)<br>
+                    • Prestations de services BIC : 21,2% (ou 10,6% avec ACRE)<br>
+                    • Vente de marchandises : 12,3% (ou 6,15% avec ACRE)<br>
+                    <br>
+                    <strong>Abattements forfaitaires :</strong> BNC 34% | BIC services 50% | Vente 71%
+                </div>
+            </div>
+            </div><!-- Fin sub-panel CA vers Net -->
+
+            <!-- Sub-panel Net vers CA -->
+            <div id="subpanel-net-vers-ca" class="sub-panel">
+                <div class="card">
+                    <h2 class="card-title">Du net souhaité vers le CA</h2>
+                    
+                    <div class="form-group">
+                        <label for="net-souhaite">Revenu net mensuel souhaité (après cotisations et IR)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="net-souhaite" placeholder="3 000" min="0" step="100" oninput="calculerInverse()">
+                            <span class="input-suffix">€</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-bottom: 1rem;">
+                        <strong>⚙️ Paramètres utilisés :</strong> Les paramètres de l'onglet "CA → Net" sont repris (type d'activité, parts fiscales, ACRE, versement libératoire).
+                    </div>
+                </div>
+
+                <div class="card results">
+                    <h2 class="card-title">CA nécessaire</h2>
+                    <div class="result-grid">
+                        <div class="result-item highlight">
+                            <span class="result-label">CA mensuel à facturer</span>
+                            <span class="result-value" id="res-ca-inverse">0 €</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">CA annuel à facturer</span>
+                            <span class="result-value" id="res-ca-annuel-inverse">0 €</span>
+                        </div>
+                        <div class="result-separator"></div>
+                        <div class="result-item deduction">
+                            <span class="result-label">Cotisations sociales estimées</span>
+                            <span class="result-value" id="res-cotis-inverse">- 0 €</span>
+                        </div>
+                        <div class="result-item deduction">
+                            <span class="result-label">IR estimé</span>
+                            <span class="result-value" id="res-ir-inverse">- 0 €</span>
+                        </div>
+                        <div class="result-separator"></div>
+                        <div class="result-item final">
+                            <span class="result-label">Revenu net mensuel</span>
+                            <span class="result-value" id="res-net-inverse">0 €</span>
+                        </div>
+                    </div>
+
+                    <div class="result-grid" style="margin-top: 1rem;">
+                        <div class="result-item">
+                            <span class="result-label">💰 Taux journalier (20 jours/mois)</span>
+                            <span class="result-value" id="res-tjm">0 €</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">⏱️ Taux horaire (7h/jour)</span>
+                            <span class="result-value" id="res-th">0 €</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Aide au calcul du TJM :</strong><br>
+                        • TJM = CA mensuel ÷ nombre de jours facturés<br>
+                        • Pensez à inclure vos congés, prospection, administratif<br>
+                        • Un indépendant facture en moyenne 15-18 jours/mois
+                    </div>
+                </div>
+            </div><!-- Fin sub-panel Net vers CA -->
+
+            <!-- Section CFE -->
+            <div class="card">
+                <h2 class="card-title">Estimation CFE annuelle</h2>
+                
+                <div class="form-group">
+                    <label for="ville-cfe">Commune de domiciliation</label>
+                    <select id="ville-cfe" onchange="calculerCFE()">
+                        <optgroup label="Paris">
+                            <option value="paris">Paris (75)</option>
+                        </optgroup>
+                        <optgroup label="Île-de-France - Petite couronne">
+                            <option value="boulogne">Boulogne-Billancourt (92)</option>
+                            <option value="nanterre">Nanterre (92)</option>
+                            <option value="courbevoie">Courbevoie / La Défense (92)</option>
+                            <option value="levallois">Levallois-Perret (92)</option>
+                            <option value="neuilly">Neuilly-sur-Seine (92)</option>
+                            <option value="montreuil">Montreuil (93)</option>
+                            <option value="saint-denis">Saint-Denis (93)</option>
+                            <option value="pantin">Pantin (93)</option>
+                            <option value="creteil">Créteil (94)</option>
+                            <option value="vincennes">Vincennes (94)</option>
+                        </optgroup>
+                        <optgroup label="Île-de-France - Grande couronne">
+                            <option value="versailles">Versailles (78)</option>
+                            <option value="saint-germain">Saint-Germain-en-Laye (78)</option>
+                            <option value="evry">Évry-Courcouronnes (91)</option>
+                            <option value="cergy">Cergy (95)</option>
+                            <option value="argenteuil">Argenteuil (95)</option>
+                            <option value="meaux">Meaux (77)</option>
+                        </optgroup>
+                        <optgroup label="Grandes métropoles">
+                            <option value="lyon">Lyon (69)</option>
+                            <option value="marseille">Marseille (13)</option>
+                            <option value="toulouse">Toulouse (31)</option>
+                            <option value="nice">Nice (06)</option>
+                            <option value="nantes">Nantes (44)</option>
+                            <option value="bordeaux">Bordeaux (33)</option>
+                            <option value="lille">Lille (59)</option>
+                            <option value="strasbourg">Strasbourg (67)</option>
+                            <option value="rennes">Rennes (35)</option>
+                            <option value="montpellier">Montpellier (34)</option>
+                        </optgroup>
+                        <optgroup label="Estimation personnalisée">
+                            <option value="custom">Saisir un taux personnalisé</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-row" id="custom-cfe-row" style="display: none;">
+                    <div class="form-group">
+                        <label for="taux-cfe-custom">Taux CFE de votre commune</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="taux-cfe-custom" placeholder="25" min="10" max="50" step="0.01" oninput="calculerCFE()">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="base-cfe-custom">Base minimale (optionnel)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="base-cfe-custom" placeholder="Auto" min="200" max="8000" step="1" oninput="calculerCFE()">
+                            <span class="input-suffix">€</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Année d'activité</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="cfe-annee1" name="cfe-premiere" value="creation" onchange="calculerCFE()">
+                            <label for="cfe-annee1">1ère année (exonéré)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="cfe-annee2" name="cfe-premiere" value="oui" onchange="calculerCFE()">
+                            <label for="cfe-annee2">2ème année (-50%)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="cfe-annee3" name="cfe-premiere" value="non" checked onchange="calculerCFE()">
+                            <label for="cfe-annee3">3ème année et +</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-item">
+                        <span class="result-label">Base minimale applicable</span>
+                        <span class="result-value" id="res-base-cfe">0 €</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Taux communal</span>
+                        <span class="result-value" id="res-taux-cfe">0 %</span>
+                    </div>
+                    <div class="result-item highlight">
+                        <span class="result-label">CFE estimée (annuelle)</span>
+                        <span class="result-value" id="res-cfe">0 €</span>
+                    </div>
+                </div>
+
+                <div class="info-box" id="cfe-info">
+                    <strong>💡 Règles CFE :</strong><br>
+                    • 1ère année d'activité → Exonération totale<br>
+                    • 2ème année → Réduction 50% de la base<br>
+                    • 3ème année et + → Taux plein<br>
+                    • Exonération si CA (N-2) ≤ 5 000 €
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Simulation Inverse : Salaire → CA -->
+        <div id="panel-reverse" class="panel">
+            <div class="card">
+                <h2 class="card-title">Quel CA pour atteindre un salaire net ?</h2>
+                
+                <div class="form-group">
+                    <label for="salaire-cible">Salaire net mensuel souhaité (après IR)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="salaire-cible" placeholder="2 500" min="0" step="100" oninput="calculerCAInverse()">
+                        <span class="input-suffix">€</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Type d'activité</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="rev-activite-bnc" name="rev-activite" value="bnc" checked onchange="calculerCAInverse()">
+                            <label for="rev-activite-bnc">Prestations BNC (24,6%)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="rev-activite-bic" name="rev-activite" value="bic-services" onchange="calculerCAInverse()">
+                            <label for="rev-activite-bic">Prestations BIC (21,2%)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="rev-activite-vente" name="rev-activite" value="bic-vente" onchange="calculerCAInverse()">
+                            <label for="rev-activite-vente">Vente (12,3%)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="rev-parts">Parts fiscales</label>
+                        <select id="rev-parts" onchange="calculerCAInverse()">
+                            <option value="1">1 part (célibataire)</option>
+                            <option value="1.5">1,5 parts</option>
+                            <option value="2">2 parts (couple)</option>
+                            <option value="2.5">2,5 parts</option>
+                            <option value="3">3 parts</option>
+                            <option value="3.5">3,5 parts</option>
+                            <option value="4">4 parts</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rev-vl">Versement libératoire IR</label>
+                        <select id="rev-vl" onchange="calculerCAInverse()">
+                            <option value="non">Non</option>
+                            <option value="oui">Oui</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="rev-acre">ACRE (1ère année)</label>
+                        <select id="rev-acre" onchange="calculerCAInverse()">
+                            <option value="non">Non</option>
+                            <option value="oui">Oui - Taux réduit 50%</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rev-jours">Jours travaillés / mois</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="rev-jours" placeholder="20" min="1" max="31" step="1" value="20" oninput="calculerCAInverse()">
+                            <span class="input-suffix">j</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card results">
+                <h2 class="card-title">CA nécessaire</h2>
+                <div class="result-grid">
+                    <div class="result-item highlight">
+                        <span class="result-label">CA mensuel à facturer</span>
+                        <span class="result-value" id="rev-ca-mensuel">0 €</span>
+                    </div>
+                    <div class="result-item highlight">
+                        <span class="result-label">CA annuel</span>
+                        <span class="result-value" id="rev-ca-annuel">0 €</span>
+                    </div>
+                    <div class="result-separator"></div>
+                    <div class="result-item">
+                        <span class="result-label">Cotisations sociales mensuelles</span>
+                        <span class="result-value" id="rev-cotis">0 €</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">IR mensuel estimé</span>
+                        <span class="result-value" id="rev-ir">0 €</span>
+                    </div>
+                    <div class="result-item final">
+                        <span class="result-label">Revenu net mensuel obtenu</span>
+                        <span class="result-value" id="rev-net-obtenu">0 €</span>
+                    </div>
+                </div>
+
+                <div class="result-grid" style="margin-top: 1rem;">
+                    <div class="result-item">
+                        <span class="result-label">💰 Taux journalier moyen (TJM)</span>
+                        <span class="result-value" id="rev-tjm">0 €</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">⏱️ Taux horaire (base 7h/j)</span>
+                        <span class="result-value" id="rev-th">0 €</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Comment lire ces résultats :</strong><br>
+                    Pour obtenir l'équivalent d'un salaire net de <span id="info-salaire-cible">0</span> €/mois, vous devez facturer un CA de <span id="info-ca-cible">0</span> €/mois.<br><br>
+                    <strong>Attention :</strong> Ce calcul n'inclut pas la CFE (~200-800 €/an), les frais professionnels, la mutuelle, la prévoyance, ni les congés payés (un salarié en a ~5 semaines).
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2025 <a href="https://nexuspaiesconseils.fr" target="_blank">Nexus Paies Conseils</a> — Simulation indicative, non contractuelle</p>
+            <p style="margin-top: 0.5rem;">Barème IR 2025 (revenus 2024) • Taux cotisations en vigueur</p>
+        </footer>
+    </div>
+
+    <script>
+        // Barème IR 2025 (revenus 2024)
+        const TRANCHES_IR_2025 = [
+            { plafond: 11497, taux: 0 },
+            { plafond: 29315, taux: 0.11 },
+            { plafond: 83823, taux: 0.30 },
+            { plafond: 180294, taux: 0.41 },
+            { plafond: Infinity, taux: 0.45 }
+        ];
+
+        // Taux de cotisations micro-entreprise 2025
+        const TAUX_COTISATIONS = {
+            'bnc': { normal: 0.246, acre: 0.123 },
+            'bic-services': { normal: 0.212, acre: 0.106 },
+            'bic-vente': { normal: 0.123, acre: 0.0615 }
+        };
+
+        // Abattements forfaitaires micro-entreprise
+        const ABATTEMENTS = {
+            'bnc': 0.34,
+            'bic-services': 0.50,
+            'bic-vente': 0.71
+        };
+
+        // Taux versement libératoire
+        const TAUX_VL = {
+            'bnc': 0.022,
+            'bic-services': 0.017,
+            'bic-vente': 0.01
+        };
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`panel-${tab}`).classList.add('active');
+        }
+
+        function switchSubTab(subtab) {
+            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+            
+            document.querySelector(`[data-subtab="${subtab}"]`).classList.add('active');
+            document.getElementById(`subpanel-${subtab}`).classList.add('active');
+        }
+
+        // Fonction de calcul inverse : Net souhaité → CA nécessaire
+        function calculerInverse() {
+            const netSouhaite = parseFloat(document.getElementById('net-souhaite').value) || 0;
+            const activite = document.querySelector('input[name="activite"]:checked').value;
+            const parts = parseFloat(document.getElementById('parts-fiscales-micro').value);
+            const vl = document.getElementById('versement-liberatoire').value === 'oui';
+            const acre = document.getElementById('acre').value === 'oui';
+
+            if (netSouhaite <= 0) {
+                document.getElementById('res-ca-inverse').textContent = '0 €';
+                document.getElementById('res-ca-annuel-inverse').textContent = '0 €';
+                document.getElementById('res-cotis-inverse').textContent = '- 0 €';
+                document.getElementById('res-ir-inverse').textContent = '- 0 €';
+                document.getElementById('res-net-inverse').textContent = '0 €';
+                document.getElementById('res-tjm').textContent = '0 €';
+                document.getElementById('res-th').textContent = '0 €';
+                return;
+            }
+
+            // Taux de cotisations
+            const tauxCotis = acre ? TAUX_COTISATIONS[activite].acre : TAUX_COTISATIONS[activite].normal;
+            const abattement = ABATTEMENTS[activite];
+
+            // Calcul itératif pour trouver le CA (car le taux IR dépend du CA)
+            let ca = netSouhaite / (1 - tauxCotis - 0.10); // Estimation initiale
+            let iterations = 0;
+            let netCalcule = 0;
+
+            while (iterations < 20) {
+                const cotisations = ca * tauxCotis;
+                const apresCharges = ca - cotisations;
+
+                let impotMensuel;
+                if (vl) {
+                    impotMensuel = ca * TAUX_VL[activite];
+                } else {
+                    const revenuImposableMensuel = ca * (1 - abattement);
+                    const revenuImposableAnnuel = revenuImposableMensuel * 12;
+                    const impotAnnuel = calculerIR(revenuImposableAnnuel, parts);
+                    impotMensuel = impotAnnuel / 12;
+                }
+
+                netCalcule = apresCharges - impotMensuel;
+                
+                // Ajustement du CA
+                const ecart = netSouhaite - netCalcule;
+                if (Math.abs(ecart) < 1) break; // Précision à 1€ près
+                
+                ca += ecart * 1.3; // Facteur de correction
+                iterations++;
+            }
+
+            // Calculs finaux avec le CA trouvé
+            const cotisations = ca * tauxCotis;
+            let impotMensuel;
+            if (vl) {
+                impotMensuel = ca * TAUX_VL[activite];
+            } else {
+                const revenuImposableMensuel = ca * (1 - abattement);
+                const revenuImposableAnnuel = revenuImposableMensuel * 12;
+                const impotAnnuel = calculerIR(revenuImposableAnnuel, parts);
+                impotMensuel = impotAnnuel / 12;
+            }
+
+            const caAnnuel = ca * 12;
+            const tjm = ca / 20; // 20 jours travaillés par mois
+            const th = tjm / 7; // 7 heures par jour
+
+            // Affichage
+            document.getElementById('res-ca-inverse').textContent = formatMontant(Math.round(ca));
+            document.getElementById('res-ca-annuel-inverse').textContent = formatMontant(Math.round(caAnnuel));
+            document.getElementById('res-cotis-inverse').textContent = '- ' + formatMontant(Math.round(cotisations));
+            document.getElementById('res-ir-inverse').textContent = '- ' + formatMontant(Math.round(impotMensuel));
+            document.getElementById('res-net-inverse').textContent = formatMontant(Math.round(netCalcule));
+            document.getElementById('res-tjm').textContent = formatMontant(Math.round(tjm));
+            document.getElementById('res-th').textContent = formatMontant(Math.round(th));
+        }
+
+        // Gestion affichage taux personnalisé
+        document.querySelectorAll('input[name="taux-type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const tauxPersoInput = document.getElementById('taux-perso-input');
+                tauxPersoInput.style.display = this.value === 'perso' ? 'block' : 'none';
+            });
+        });
+
+        function calculerIR(revenuImposableAnnuel, parts) {
+            const quotient = revenuImposableAnnuel / parts;
+            let impotQuotient = 0;
+            let dernierPlafond = 0;
+
+            for (const tranche of TRANCHES_IR_2025) {
+                if (quotient > dernierPlafond) {
+                    const montantDansTranche = Math.min(quotient, tranche.plafond) - dernierPlafond;
+                    impotQuotient += montantDansTranche * tranche.taux;
+                }
+                dernierPlafond = tranche.plafond;
+            }
+
+            return impotQuotient * parts;
+        }
+
+        function calculerTauxMoyen(revenuImposableAnnuel, parts) {
+            const impot = calculerIR(revenuImposableAnnuel, parts);
+            if (revenuImposableAnnuel <= 0) return 0;
+            return (impot / revenuImposableAnnuel) * 100;
+        }
+
+        function formatMontant(montant) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(montant) + ' €';
+        }
+
+        function toggleTauxGlobal() {
+            const tauxType = document.querySelector('input[name="taux-global-type"]:checked').value;
+            const tauxGlobalInput = document.getElementById('taux-global-input');
+            const paramsAuto = document.querySelectorAll('#parts-fiscales-micro, #versement-liberatoire, #acre');
+            
+            if (tauxType === 'perso') {
+                tauxGlobalInput.style.display = 'block';
+                // Griser les paramètres non utilisés
+                paramsAuto.forEach(el => el.closest('.form-group').style.opacity = '0.5');
+            } else {
+                tauxGlobalInput.style.display = 'none';
+                paramsAuto.forEach(el => el.closest('.form-group').style.opacity = '1');
+            }
+            calculerMicro();
+        }
+
+        function calculerSalarie() {
+            const brut = parseFloat(document.getElementById('salaire-brut').value) || 0;
+            const statut = document.getElementById('statut-cadre').value;
+            const parts = parseFloat(document.getElementById('parts-fiscales').value);
+            const tauxType = document.querySelector('input[name="taux-type"]:checked').value;
+            const tauxManuel = parseFloat(document.getElementById('taux-manuel').value) || 0;
+
+            // Taux de cotisations salariales
+            const tauxCotisations = statut === 'cadre' ? 0.23 : 0.22;
+            const cotisations = brut * tauxCotisations;
+            const netAvantImpot = brut - cotisations;
+
+            // Calcul du net imposable (approximation avec abattement 10%)
+            const netImposableAnnuel = netAvantImpot * 12 * 0.90;
+            
+            // Calcul taux d'imposition
+            let tauxIR;
+            if (tauxType === 'perso') {
+                tauxIR = tauxManuel;
+            } else {
+                tauxIR = calculerTauxMoyen(netImposableAnnuel, parts);
+            }
+
+            const impotMensuel = netAvantImpot * (tauxIR / 100);
+            const netFinal = netAvantImpot - impotMensuel;
+
+            // Mise à jour de l'affichage
+            document.getElementById('res-brut').textContent = formatMontant(brut);
+            document.getElementById('res-cotisations').textContent = '- ' + formatMontant(cotisations);
+            document.getElementById('res-net-avant').textContent = formatMontant(netAvantImpot);
+            document.getElementById('taux-affiche').textContent = tauxIR.toFixed(1);
+            document.getElementById('res-impot').textContent = '- ' + formatMontant(impotMensuel);
+            document.getElementById('res-net-final').textContent = formatMontant(netFinal);
+        }
+
+        function calculerMicro() {
+            const ca = parseFloat(document.getElementById('ca-mensuel').value) || 0;
+            const activite = document.querySelector('input[name="activite"]:checked').value;
+            const tauxGlobalType = document.querySelector('input[name="taux-global-type"]:checked').value;
+            const tauxGlobalManuel = parseFloat(document.getElementById('taux-global-manuel').value) || 0;
+
+            let cotisations, apresCharges, impotMensuel, netMicro, tauxGlobal, tauxCotis, tauxIREffectif;
+
+            if (tauxGlobalType === 'perso') {
+                // Mode taux global personnalisé
+                tauxGlobal = tauxGlobalManuel;
+                const prelevementTotal = ca * (tauxGlobal / 100);
+                netMicro = ca - prelevementTotal;
+                
+                // Estimation répartition cotisations/IR basée sur l'activité
+                tauxCotis = TAUX_COTISATIONS[activite].normal;
+                cotisations = ca * tauxCotis;
+                apresCharges = ca - cotisations;
+                impotMensuel = prelevementTotal - cotisations;
+                if (impotMensuel < 0) impotMensuel = 0;
+                tauxIREffectif = ca > 0 ? (impotMensuel / ca * 100) : 0;
+            } else {
+                // Mode calcul automatique
+                const parts = parseFloat(document.getElementById('parts-fiscales-micro').value);
+                const vl = document.getElementById('versement-liberatoire').value === 'oui';
+                const acre = document.getElementById('acre').value === 'oui';
+
+                // Taux de cotisations
+                tauxCotis = acre ? TAUX_COTISATIONS[activite].acre : TAUX_COTISATIONS[activite].normal;
+                cotisations = ca * tauxCotis;
+                apresCharges = ca - cotisations;
+
+                // Calcul de l'IR
+                if (vl) {
+                    // Versement libératoire
+                    impotMensuel = ca * TAUX_VL[activite];
+                    tauxIREffectif = TAUX_VL[activite] * 100;
+                } else {
+                    // Régime classique avec abattement
+                    const abattement = ABATTEMENTS[activite];
+                    const revenuImposableMensuel = ca * (1 - abattement);
+                    const revenuImposableAnnuel = revenuImposableMensuel * 12;
+                    const impotAnnuel = calculerIR(revenuImposableAnnuel, parts);
+                    impotMensuel = impotAnnuel / 12;
+                    // Taux effectif par rapport au CA
+                    tauxIREffectif = ca > 0 ? (impotMensuel / ca * 100) : 0;
+                }
+
+                netMicro = apresCharges - impotMensuel;
+                tauxGlobal = ca > 0 ? ((ca - netMicro) / ca * 100) : 0;
+            }
+
+            const netAnnuel = netMicro * 12;
+
+            // Mise à jour de l'affichage
+            document.getElementById('res-ca').textContent = formatMontant(ca);
+            document.getElementById('taux-cotis').textContent = (tauxCotis * 100).toFixed(1);
+            document.getElementById('res-cotis-micro').textContent = '- ' + formatMontant(cotisations);
+            document.getElementById('res-apres-charges').textContent = formatMontant(apresCharges);
+            document.getElementById('taux-ir-micro').textContent = tauxIREffectif.toFixed(1);
+            document.getElementById('res-ir-micro').textContent = '- ' + formatMontant(impotMensuel);
+            document.getElementById('res-net-micro').textContent = formatMontant(netMicro);
+            document.getElementById('res-net-annuel').textContent = formatMontant(netAnnuel);
+            document.getElementById('res-taux-global').textContent = tauxGlobal.toFixed(1) + ' %';
+
+            // Mettre à jour aussi la CFE
+            calculerCFE();
+        }
+
+        // Initialisation
+        calculerSalarie();
+        calculerMicro();
+        calculerCFE();
+        calculerCAInverse();
+        calculerInverse();
+
+        // Données CFE par ville (taux 2025 approximatifs et bases minimales moyennes)
+        const VILLES_CFE = {
+            'paris': { nom: 'Paris', taux: 16.52, baseNiveau: 'bas' },
+            'boulogne': { nom: 'Boulogne-Billancourt', taux: 26.96, baseNiveau: 'moyen' },
+            'nanterre': { nom: 'Nanterre', taux: 27.45, baseNiveau: 'moyen' },
+            'courbevoie': { nom: 'Courbevoie', taux: 19.65, baseNiveau: 'moyen' },
+            'levallois': { nom: 'Levallois-Perret', taux: 17.84, baseNiveau: 'bas' },
+            'neuilly': { nom: 'Neuilly-sur-Seine', taux: 14.09, baseNiveau: 'bas' },
+            'montreuil': { nom: 'Montreuil', taux: 34.86, baseNiveau: 'haut' },
+            'saint-denis': { nom: 'Saint-Denis', taux: 35.22, baseNiveau: 'haut' },
+            'pantin': { nom: 'Pantin', taux: 32.15, baseNiveau: 'moyen' },
+            'creteil': { nom: 'Créteil', taux: 30.72, baseNiveau: 'moyen' },
+            'vincennes': { nom: 'Vincennes', taux: 22.18, baseNiveau: 'moyen' },
+            'versailles': { nom: 'Versailles', taux: 25.43, baseNiveau: 'moyen' },
+            'saint-germain': { nom: 'Saint-Germain-en-Laye', taux: 21.35, baseNiveau: 'moyen' },
+            'evry': { nom: 'Évry-Courcouronnes', taux: 34.50, baseNiveau: 'haut' },
+            'cergy': { nom: 'Cergy', taux: 28.75, baseNiveau: 'moyen' },
+            'argenteuil': { nom: 'Argenteuil', taux: 35.89, baseNiveau: 'haut' },
+            'meaux': { nom: 'Meaux', taux: 32.40, baseNiveau: 'moyen' },
+            'lyon': { nom: 'Lyon', taux: 28.62, baseNiveau: 'moyen' },
+            'marseille': { nom: 'Marseille', taux: 33.61, baseNiveau: 'haut' },
+            'toulouse': { nom: 'Toulouse', taux: 36.58, baseNiveau: 'haut' },
+            'nice': { nom: 'Nice', taux: 30.12, baseNiveau: 'moyen' },
+            'nantes': { nom: 'Nantes', taux: 31.52, baseNiveau: 'moyen' },
+            'bordeaux': { nom: 'Bordeaux', taux: 30.45, baseNiveau: 'haut' },
+            'lille': { nom: 'Lille', taux: 35.79, baseNiveau: 'haut' },
+            'strasbourg': { nom: 'Strasbourg', taux: 29.85, baseNiveau: 'moyen' },
+            'rennes': { nom: 'Rennes', taux: 30.25, baseNiveau: 'moyen' },
+            'montpellier': { nom: 'Montpellier', taux: 35.42, baseNiveau: 'haut' },
+            'custom': { nom: 'Personnalisé', taux: 0, baseNiveau: 'moyen' }
+        };
+
+        // Barème national des bases minimales CFE 2025
+        const BAREME_CFE_2025 = [
+            { plafondCA: 10000, baseMin: 243, baseMoy: 400, baseMax: 579 },
+            { plafondCA: 32600, baseMin: 243, baseMoy: 700, baseMax: 1158 },
+            { plafondCA: 100000, baseMin: 243, baseMoy: 1200, baseMax: 2433 },
+            { plafondCA: 250000, baseMin: 243, baseMoy: 2000, baseMax: 4056 },
+            { plafondCA: 500000, baseMin: 243, baseMoy: 2500, baseMax: 4866 },
+            { plafondCA: Infinity, baseMin: 243, baseMoy: 4000, baseMax: 7299 }
+        ];
+
+        function getBaseMinimaleCFE(ca, niveau) {
+            for (const tranche of BAREME_CFE_2025) {
+                if (ca <= tranche.plafondCA) {
+                    switch(niveau) {
+                        case 'bas': return tranche.baseMin + (tranche.baseMoy - tranche.baseMin) * 0.3;
+                        case 'moyen': return tranche.baseMoy;
+                        case 'haut': return tranche.baseMoy + (tranche.baseMax - tranche.baseMoy) * 0.7;
+                        default: return tranche.baseMoy;
+                    }
+                }
+            }
+            return BAREME_CFE_2025[BAREME_CFE_2025.length - 1].baseMoy;
+        }
+
+        // Gestion affichage taux CFE personnalisé
+        document.getElementById('ville-cfe').addEventListener('change', function() {
+            const customRow = document.getElementById('custom-cfe-row');
+            customRow.style.display = this.value === 'custom' ? 'grid' : 'none';
+        });
+
+        function calculerCFE() {
+            const ca = parseFloat(document.getElementById('ca-mensuel').value) || 0;
+            const caAnnuel = ca * 12;
+            const villeKey = document.getElementById('ville-cfe').value;
+            const anneeActivite = document.querySelector('input[name="cfe-premiere"]:checked').value;
+            
+            // Exonération 1ère année d'activité
+            if (anneeActivite === 'creation') {
+                document.getElementById('res-base-cfe').textContent = 'Exonéré';
+                document.getElementById('res-taux-cfe').textContent = '-';
+                document.getElementById('res-cfe').textContent = '0 € (1ère année)';
+                return;
+            }
+            
+            // Exonération si CA ≤ 5000€
+            if (caAnnuel <= 5000) {
+                document.getElementById('res-base-cfe').textContent = 'Exonéré';
+                document.getElementById('res-taux-cfe').textContent = '-';
+                document.getElementById('res-cfe').textContent = '0 € (CA ≤ 5 000 €)';
+                return;
+            }
+
+            let taux, base;
+            
+            if (villeKey === 'custom') {
+                taux = parseFloat(document.getElementById('taux-cfe-custom').value) || 25;
+                const baseCustom = parseFloat(document.getElementById('base-cfe-custom').value);
+                if (baseCustom) {
+                    base = baseCustom;
+                } else {
+                    base = getBaseMinimaleCFE(caAnnuel, 'moyen');
+                }
+            } else {
+                const ville = VILLES_CFE[villeKey];
+                taux = ville.taux;
+                base = getBaseMinimaleCFE(caAnnuel, ville.baseNiveau);
+            }
+
+            let cfe = base * (taux / 100);
+            
+            // Taxe additionnelle CCI (1,12%)
+            cfe += base * 0.0112;
+            
+            // Réduction 50% deuxième année d'activité (première année d'imposition)
+            const reduction = anneeActivite === 'oui';
+            if (reduction) {
+                cfe = cfe * 0.5;
+            }
+
+            document.getElementById('res-base-cfe').textContent = formatMontant(Math.round(base));
+            document.getElementById('res-taux-cfe').textContent = taux.toFixed(2) + ' %';
+            document.getElementById('res-cfe').textContent = formatMontant(Math.round(cfe)) + (reduction ? ' (réduit 50%)' : '');
+        }
+
+        // Fonction de calcul inverse : Salaire net souhaité → CA nécessaire
+        function calculerCAInverse() {
+            const salaireCible = parseFloat(document.getElementById('salaire-cible').value) || 0;
+            const activite = document.querySelector('input[name="rev-activite"]:checked').value;
+            const parts = parseFloat(document.getElementById('rev-parts').value);
+            const vl = document.getElementById('rev-vl').value === 'oui';
+            const acre = document.getElementById('rev-acre').value === 'oui';
+            const jours = parseFloat(document.getElementById('rev-jours').value) || 20;
+
+            if (salaireCible <= 0) {
+                resetResultsInverse();
+                return;
+            }
+
+            // Taux de cotisations
+            const tauxCotis = acre ? TAUX_COTISATIONS[activite].acre : TAUX_COTISATIONS[activite].normal;
+            const abattement = ABATTEMENTS[activite];
+
+            // Calcul itératif pour trouver le CA nécessaire
+            let caEstime = salaireCible * 1.5; // Point de départ
+            let iterations = 0;
+            let netObtenu = 0;
+            
+            while (iterations < 50) {
+                iterations++;
+                
+                // Calcul des cotisations
+                const cotisations = caEstime * tauxCotis;
+                const apresCharges = caEstime - cotisations;
+                
+                // Calcul de l'IR
+                let irMensuel;
+                if (vl) {
+                    irMensuel = caEstime * TAUX_VL[activite];
+                } else {
+                    const revenuImposableMensuel = caEstime * (1 - abattement);
+                    const revenuImposableAnnuel = revenuImposableMensuel * 12;
+                    const irAnnuel = calculerIR(revenuImposableAnnuel, parts);
+                    irMensuel = irAnnuel / 12;
+                }
+                
+                netObtenu = apresCharges - irMensuel;
+                
+                // Ajustement
+                const ecart = salaireCible - netObtenu;
+                if (Math.abs(ecart) < 1) break; // Précision à 1€
+                
+                // Estimation du taux effectif pour ajuster
+                const tauxEffectif = caEstime > 0 ? (caEstime - netObtenu) / caEstime : 0.4;
+                caEstime += ecart / (1 - tauxEffectif);
+                
+                // Éviter les valeurs négatives
+                if (caEstime < 0) caEstime = salaireCible;
+            }
+
+            // Calculs finaux avec le CA trouvé
+            const cotisationsFinales = caEstime * tauxCotis;
+            let irFinal;
+            if (vl) {
+                irFinal = caEstime * TAUX_VL[activite];
+            } else {
+                const revenuImposableMensuel = caEstime * (1 - abattement);
+                const revenuImposableAnnuel = revenuImposableMensuel * 12;
+                const irAnnuel = calculerIR(revenuImposableAnnuel, parts);
+                irFinal = irAnnuel / 12;
+            }
+
+            const caAnnuel = caEstime * 12;
+            const tjm = jours > 0 ? caEstime / jours : 0;
+            const th = tjm / 7;
+
+            // Mise à jour de l'affichage
+            document.getElementById('rev-ca-mensuel').textContent = formatMontant(Math.round(caEstime));
+            document.getElementById('rev-ca-annuel').textContent = formatMontant(Math.round(caAnnuel));
+            document.getElementById('rev-cotis').textContent = formatMontant(Math.round(cotisationsFinales));
+            document.getElementById('rev-ir').textContent = formatMontant(Math.round(irFinal));
+            document.getElementById('rev-net-obtenu').textContent = formatMontant(Math.round(netObtenu));
+            document.getElementById('rev-tjm').textContent = formatMontant(Math.round(tjm)) + ' HT';
+            document.getElementById('rev-th').textContent = formatMontant(Math.round(th)) + ' HT';
+            document.getElementById('info-salaire-cible').textContent = formatMontant(salaireCible).replace(' €', '');
+            document.getElementById('info-ca-cible').textContent = formatMontant(Math.round(caEstime)).replace(' €', '');
+        }
+
+        function resetResultsInverse() {
+            document.getElementById('rev-ca-mensuel').textContent = '0 €';
+            document.getElementById('rev-ca-annuel').textContent = '0 €';
+            document.getElementById('rev-cotis').textContent = '0 €';
+            document.getElementById('rev-ir').textContent = '0 €';
+            document.getElementById('rev-net-obtenu').textContent = '0 €';
+            document.getElementById('rev-tjm').textContent = '0 €';
+            document.getElementById('rev-th').textContent = '0 €';
+            document.getElementById('info-salaire-cible').textContent = '0';
+            document.getElementById('info-ca-cible').textContent = '0';
+        }
+    </script>
+</body>
+</html>
