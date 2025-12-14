@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "2025.1",
-    "last_update": "2025-01-01",
+    "last_update": "2025-12-14",
     "sources": {
       "cotisations": "https://www.urssaf.fr",
       "ir": "https://www.impots.gouv.fr",
@@ -26,11 +26,26 @@
   "bareme_ir": {
     "annee": 2025,
     "tranches": [
-      {"plafond": 11497, "taux": 0},
-      {"plafond": 29315, "taux": 0.11},
-      {"plafond": 83823, "taux": 0.30},
-      {"plafond": 180294, "taux": 0.41},
-      {"plafond": null, "taux": 0.45}
+      {
+        "plafond": 11497,
+        "taux": 0
+      },
+      {
+        "plafond": 29315,
+        "taux": 0.11
+      },
+      {
+        "plafond": 83823,
+        "taux": 0.3
+      },
+      {
+        "plafond": 180294,
+        "taux": 0.41
+      },
+      {
+        "plafond": null,
+        "taux": 0.45
+      }
     ]
   },
   "plafonds_micro": {
@@ -50,7 +65,7 @@
   },
   "smic_mensuel": {
     "2024": 1766.92,
-    "2025": 1801.80,
+    "2025": 1801.8,
     "2026": 1823.03
   }
 }
