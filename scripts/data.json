@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "version": "2025.1",
+    "last_update": "2025-01-01",
+    "sources": {
+      "cotisations": "https://www.urssaf.fr",
+      "ir": "https://www.impots.gouv.fr",
+      "cfe": "https://www.impots.gouv.fr"
+    }
+  },
+  "cotisations_sociales": {
+    "annee": 2025,
+    "bnc": {
+      "normal": 0.246,
+      "acre": 0.123,
+      "description": "Prestations de services BNC (régime général)"
+    },
+    "bic_services": {
+      "normal": 0.212,
+      "acre": 0.106,
+      "description": "Prestations de services BIC"
+    },
+    "bic_vente": {
+      "normal": 0.123,
+      "acre": 0.0615,
+      "description": "Vente de marchandises"
+    }
+  },
+  "versement_liberatoire": {
+    "annee": 2025,
+    "bnc": 0.022,
+    "bic_services": 0.017,
+    "bic_vente": 0.01
+  },
+  "abattements_forfaitaires": {
+    "bnc": 0.34,
+    "bic_services": 0.50,
+    "bic_vente": 0.71
+  },
+  "bareme_ir": {
+    "annee": 2025,
+    "revenus_annee": 2024,
+    "tranches": [
+      {"plafond": 11497, "taux": 0},
+      {"plafond": 29315, "taux": 0.11},
+      {"plafond": 83823, "taux": 0.30},
+      {"plafond": 180294, "taux": 0.41},
+      {"plafond": null, "taux": 0.45}
+    ]
+  },
+  "plafonds_micro": {
+    "annee": 2025,
+    "vente_marchandises": 188700,
+    "prestations_services": 77700
+  },
+  "cotisations_salarie": {
+    "non_cadre": 0.22,
+    "cadre": 0.23
+  }
+}
