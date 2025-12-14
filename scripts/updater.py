@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Agent de mise à jour automatique des données fiscales
-pour le simulateur Nexus Paies Conseils.
+pour les simulateurs Nexus Paies Conseils.
 """
 
 import json
@@ -24,6 +24,8 @@ BASE_DIR = Path(__file__).parent
 ROOT_DIR = BASE_DIR.parent
 DATA_FILE = BASE_DIR / "data.json"
 SIMULATEUR_FILE = ROOT_DIR / "simulateur-fiscal.html"
+CALCULATRICE_FILE = ROOT_DIR / "calculatrice-paie.html"
+APPRENTI_FILE = ROOT_DIR / "simulateur-apprenti-syntec.html"
 RAPPORT_FILE = BASE_DIR / "rapport_maj.md"
 
 HEADERS = {
@@ -104,6 +106,63 @@ class DataUpdater:
         self.errors.append("Impossible de récupérer les taux URSSAF")
         return False
 
+    def update_pmss_smic(self) -> bool:
+        logger.info("Vérification PMSS et SMIC...")
+        url = "https://www.service-public.fr/particuliers/vosdroits/F2300"
+        soup = self.fetch_page(url)
+        if not soup:
+            return False
+        
+        text = soup.get_text()
+        annee = datetime.now().year
+        
+        # Recherche SMIC horaire
+        smic_pattern = r'(\d{1,2}[,\.]\d{2})\s*(?:€|euros?).*?(?:brut|heure|horaire)'
+        match = re.search(smic_pattern, text, re.IGNORECASE)
+        if match:
+            smic_h = float(match.group(1).replace(',', '.'))
+            if 10 <= smic_h <= 15:
+                old_smic = self.data.get('smic_horaire', {}).get(str(annee), 0)
+                if abs(smic_h - old_smic) > 0.01:
+                    self.changes.append({
+                        'type': 'smic',
+                        'champ': f'SMIC horaire {annee}',
+                        'ancien': f"{old_smic} €",
+                        'nouveau': f"{smic_h} €",
+                        'source': url
+                    })
+                    if 'smic_horaire' not in self.data:
+                        self.data['smic_horaire'] = {}
+                    if 'smic_mensuel' not in self.data:
+                        self.data['smic_mensuel'] = {}
+                    self.data['smic_horaire'][str(annee)] = smic_h
+                    self.data['smic_mensuel'][str(annee)] = round(smic_h * 151.67, 2)
+        
+        # Recherche PMSS
+        url2 = "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds.html"
+        soup2 = self.fetch_page(url2)
+        if soup2:
+            text2 = soup2.get_text()
+            pmss_pattern = r'(\d[\d\s]*)\s*(?:€|euros?).*?(?:mensuel|PMSS|plafond)'
+            match = re.search(pmss_pattern, text2, re.IGNORECASE)
+            if match:
+                pmss = int(self.clean_number(match.group(1)))
+                if 3500 <= pmss <= 5000:
+                    old_pmss = self.data.get('pmss', {}).get(str(annee), 0)
+                    if pmss != old_pmss:
+                        self.changes.append({
+                            'type': 'pmss',
+                            'champ': f'PMSS {annee}',
+                            'ancien': f"{old_pmss} €",
+                            'nouveau': f"{pmss} €",
+                            'source': url2
+                        })
+                        if 'pmss' not in self.data:
+                            self.data['pmss'] = {}
+                        self.data['pmss'][str(annee)] = pmss
+        
+        return True
+
     def update_bareme_ir(self) -> bool:
         logger.info("Vérification barème IR...")
         url = "https://www.service-public.fr/particuliers/vosdroits/F1419"
@@ -168,9 +227,9 @@ class DataUpdater:
 
     def update_simulateur_html(self):
         if not SIMULATEUR_FILE.exists():
-            logger.warning(f"Simulateur non trouvé : {SIMULATEUR_FILE}")
+            logger.warning(f"Simulateur fiscal non trouvé")
             return False
-        logger.info("Mise à jour simulateur HTML...")
+        logger.info("Mise à jour simulateur fiscal...")
         with open(SIMULATEUR_FILE, 'r', encoding='utf-8') as f:
             html = f.read()
         cotis = self.data['cotisations_sociales']
@@ -184,17 +243,65 @@ class DataUpdater:
         ]
         for pattern, replacement in replacements:
             html = re.sub(pattern, replacement, html)
-        tranches = self.data['bareme_ir']['tranches']
-        ir_pattern = r"const TRANCHES_IR_\d{4}\s*=\s*\[[\s\S]*?\];"
-        new_tranches = "const TRANCHES_IR_2025 = [\n"
-        for t in tranches:
-            plafond = t['plafond'] if t['plafond'] else 'Infinity'
-            new_tranches += f"            {{ plafond: {plafond}, taux: {t['taux']} }},\n"
-        new_tranches += "        ];"
-        html = re.sub(ir_pattern, new_tranches, html)
         with open(SIMULATEUR_FILE, 'w', encoding='utf-8') as f:
             f.write(html)
-        logger.info("Simulateur mis à jour")
+        logger.info("Simulateur fiscal OK")
+        return True
+
+    def update_calculatrice_html(self):
+        if not CALCULATRICE_FILE.exists():
+            logger.warning(f"Calculatrice paie non trouvée")
+            return False
+        logger.info("Mise à jour calculatrice paie...")
+        with open(CALCULATRICE_FILE, 'r', encoding='utf-8') as f:
+            html = f.read()
+        
+        # MAJ PMSS
+        if 'pmss' in self.data:
+            for annee, valeur in self.data['pmss'].items():
+                html = re.sub(rf'({annee}:\s*)\d+', rf'\g<1>{valeur}', html)
+        
+        # MAJ SMIC
+        if 'smic_horaire' in self.data:
+            for annee, valeur in self.data['smic_horaire'].items():
+                pattern = rf'(SMIC_HORAIRE\s*=\s*\{{[^}}]*{annee}:\s*)[\d.]+'
+                html = re.sub(pattern, rf'\g<1>{valeur}', html)
+        
+        if 'smic_mensuel' in self.data:
+            for annee, valeur in self.data['smic_mensuel'].items():
+                pattern = rf'(SMIC_MENSUEL\s*=\s*\{{[^}}]*{annee}:\s*)[\d.]+'
+                html = re.sub(pattern, rf'\g<1>{valeur}', html)
+        
+        with open(CALCULATRICE_FILE, 'w', encoding='utf-8') as f:
+            f.write(html)
+        logger.info("Calculatrice paie OK")
+        return True
+
+    def update_apprenti_html(self):
+        if not APPRENTI_FILE.exists():
+            logger.warning(f"Simulateur apprenti non trouvé")
+            return False
+        logger.info("Mise à jour simulateur apprenti Syntec...")
+        with open(APPRENTI_FILE, 'r', encoding='utf-8') as f:
+            html = f.read()
+        
+        # MAJ SMIC dans CONSTANTES
+        if 'smic_mensuel' in self.data:
+            for annee, valeur in self.data['smic_mensuel'].items():
+                # Pattern: SMIC: 1801.80 ou SMIC: 1823.03
+                pattern = rf'({annee}:\s*\{{\s*SMIC:\s*)[\d.]+'
+                html = re.sub(pattern, rf'\g<1>{valeur}', html)
+        
+        if 'smic_horaire' in self.data:
+            for annee, valeur in self.data['smic_horaire'].items():
+                pattern = rf'(SMIC_HORAIRE:\s*)[\d.]+(\s*,?\s*//.*?{annee}|[^}}]*{annee})'
+                # Plus simple: chercher SMIC_HORAIRE: XX.XX dans le bloc de l'année
+                pattern = rf'({annee}:\s*\{{[^}}]*SMIC_HORAIRE:\s*)[\d.]+'
+                html = re.sub(pattern, rf'\g<1>{valeur}', html)
+        
+        with open(APPRENTI_FILE, 'w', encoding='utf-8') as f:
+            f.write(html)
+        logger.info("Simulateur apprenti OK")
         return True
 
     def generate_report(self) -> str:
@@ -203,6 +310,11 @@ class DataUpdater:
 ## Résumé
 - **Changements** : {len(self.changes)}
 - **Erreurs** : {len(self.errors)}
+
+## Fichiers mis à jour
+- simulateur-fiscal.html
+- calculatrice-paie.html
+- simulateur-apprenti-syntec.html
 
 """
         if self.changes:
@@ -222,11 +334,14 @@ class DataUpdater:
         logger.info("Démarrage mise à jour")
         logger.info("=" * 50)
         self.update_cotisations_urssaf()
+        self.update_pmss_smic()
         self.update_bareme_ir()
         self.update_plafonds_micro()
         self.save_data()
-        if update_html and self.changes:
+        if update_html:
             self.update_simulateur_html()
+            self.update_calculatrice_html()
+            self.update_apprenti_html()
         report = self.generate_report()
         with open(RAPPORT_FILE, 'w', encoding='utf-8') as f:
             f.write(report)
