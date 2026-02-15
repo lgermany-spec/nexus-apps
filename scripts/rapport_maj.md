@@ -1,8 +1,8 @@
-# Rapport - 01/02/2026 08:27
+# Rapport - 15/02/2026 08:27
 
 ## Résumé
 - **Changements** : 0
-- **Erreurs** : 2
+- **Erreurs** : 1
 
 ## Fichiers mis à jour
 - simulateur-fiscal.html
@@ -13,5 +13,4 @@
 Les données sont à jour.
 
 ## Erreurs
-- Erreur HTTP: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
 - Erreur HTTP: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
