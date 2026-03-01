@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "2025.1",
-    "last_update": "2026-02-15",
+    "last_update": "2026-03-01",
     "sources": {
       "cotisations": "https://www.urssaf.fr",
       "ir": "https://www.impots.gouv.fr",
@@ -27,7 +27,7 @@
     "annee": 2025,
     "tranches": [
       {
-        "plafond": 11497,
+        "plafond": 11600,
         "taux": 0
       },
       {
@@ -51,7 +51,7 @@
   "plafonds_micro": {
     "annee": 2025,
     "vente_marchandises": 188700,
-    "prestations_services": 77700
+    "prestations_services": 83600
   },
   "pmss": {
     "2024": 3864,
