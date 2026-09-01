@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "2025.1",
-    "last_update": "2026-08-15",
+    "last_update": "2026-09-01",
     "sources": {
       "cotisations": "https://www.urssaf.fr",
       "ir": "https://www.impots.gouv.fr",
